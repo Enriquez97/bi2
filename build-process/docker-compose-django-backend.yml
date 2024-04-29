@@ -1,0 +1,103 @@
+version: '3.3'
+services:  
+  redis:
+    image: redis:alpine
+    networks:
+      - elastic
+  elasticsearch:
+    image: elasticsearch:7.14.0
+    volumes:
+      - ./data/elastic:/var/lib/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+      
+  backend:
+    platform: 'linux/amd64'
+    image: backend-django:local
+    container_name: backend-django-local
+    build:
+      context: ../
+      dockerfile: ./build-process/docker-backend-django/Dockerfile
+      args:
+        APP_ENVIRONMENT: 'Local'
+    volumes:
+      - ../:/home/nisira-bi
+    ports:
+      - '8080:8080'
+    env_file:
+      - ./local.backend.env
+    depends_on:
+      - redis
+      - elasticsearch
+    networks:
+      - elastic
+
+  celery:
+    platform: 'linux/amd64'
+    image: backend-celery:local
+    container_name: backend-celery-local
+    build: 
+      context: ../
+      dockerfile: ./build-process/docker-backend-celery/Dockerfile
+      args:
+        APP_ENVIRONMENT: 'Local'
+    volumes:
+      - ../:/home/nisira-bi
+    ports:
+      - '5555:5555'
+    env_file:
+      - ./local.backend.env
+    depends_on:
+      - redis
+    environment:
+      - C_FORCE_ROOT="true"
+    networks:
+      - elastic
+
+  celery-beat:
+    platform: 'linux/amd64'
+    image: backend-beat:local
+    container_name: backend-beat-local
+    build:
+      context: ../
+      dockerfile: ./build-process/docker-backend-beat/Dockerfile
+      args:
+        APP_ENVIRONMENT: 'Local'
+    volumes:
+      - ../:/home/nisira-bi
+    env_file:
+      - ./local.backend.env
+    depends_on:
+      - redis
+    networks:
+      - elastic
+
+  rabbitmq:
+    platform: 'linux/amd64'
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # Puerto para la comunicación AMQP
+      - "15672:15672"  # Puerto para el panel de control web de RabbitMQ (opcional, con el tag management)
+    volumes:
+      - ../:/home/nisira-bi
+    environment:
+      - RABBITMQ_DEFAULT_USER=nisira  # Usuario predeterminado
+      - RABBITMQ_DEFAULT_PASS=bidjango.  # Contraseña predeterminada
+    depends_on:
+      - redis
+      - elasticsearch
+    networks:
+      - elastic
+
+volumes:
+  backend-postgres-local:
+  esdata:
+
+networks:
+  elastic:
+    driver: bridge
