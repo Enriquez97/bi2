@@ -4,7 +4,7 @@ from ...resource.layouts.base import layout_base
 import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
 from ...resource.layouts.base import *
-from ...resource.components.toggle import darkModeToggle
+from ...resource.components.toggle import darkModeToggleDash
 
 class DashFinanzas:
     def __init__(self, ip: str, token :str):#, data_login: dict
@@ -21,10 +21,61 @@ class DashFinanzas:
         Content([
             Grid([
                 Col([
-                    dmc.Title("BALANCE DE COMPROBACIÓN")
-                ],size= 11),
+                    dmc.Title("Balance General")
+                ],size= 3),
                 Col([
-                    darkModeToggle()
+                    dmc.Select(
+                        label="Formato",
+                        placeholder="Todos",
+                        id="select-format",
+                        value = None,
+                        data= [],
+                        clearable=False
+                    )
+                ],size= 2),
+                Col([
+                    dmc.Select(
+                        label="Año",
+                        placeholder="Todos",
+                        id="select-year",
+                        value = None,
+                        data= [],
+                        clearable=True
+                    )
+                ],size= 2),
+                
+                Col([
+                    dmc.Select(
+                        label="Trimestre",
+                        placeholder="Todos",
+                        id="select-quarter",
+                        value = None,
+                        data= [],
+                        clearable=False
+                    )
+                ],size= 2),
+                Col([
+                    dmc.Select(
+                        label="Mes",
+                        placeholder="Todos",
+                        id="select-month",
+                        value = None,
+                        data= [],
+                        clearable=False
+                    )
+                ],size= 1),
+                Col([
+                    dmc.Select(
+                        label="Moneda",
+                        #placeholder="Todos",
+                        id="select-coin",
+                        value = "USD",
+                        data= ["USD","PEN"],
+                        clearable=False
+                    )
+                ],size= 1),
+                Col([
+                    darkModeToggleDash()
                 ],size= 1)
             ])
             
