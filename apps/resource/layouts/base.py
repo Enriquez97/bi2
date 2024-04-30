@@ -106,3 +106,17 @@ def layout_base(app,data_login = {}, children = []):
             
     )
     return app
+
+def Content(child = []):
+    return \
+        dmc.NotificationsProvider(
+            dmc.MantineProvider(
+                id="themeHolder",
+                inherit=True,
+                withGlobalStyles=True,
+                withNormalizeCSS=True,
+                children=[
+                    dmc.Container(child,fluid=True)
+                ]
+            )
+        )

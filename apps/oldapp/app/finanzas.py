@@ -2,25 +2,48 @@ from django_plotly_dash import DjangoDash
 from ...resource.constants import EXTERNAL_STYLESHEETS, EXTERNAL_SCRIPTS
 from ...resource.layouts.base import layout_base
 import dash_mantine_components as dmc
+from ...resource.helpers.make_grid import *
+from ...resource.layouts.base import *
+from ...resource.components.toggle import darkModeToggle
 
 class DashFinanzas:
-    def __init__(self, ip: str, token :str, data_login: dict):
+    def __init__(self, ip: str, token :str):#, data_login: dict
         self.ip = ip
         self.token = token
-        self.user_login = data_login
+        #self.user_login = data_login
     def finanzas_bg(self, code: str):
         app = DjangoDash(
                 name = code,
                 external_stylesheets = EXTERNAL_STYLESHEETS, 
                 external_scripts = EXTERNAL_SCRIPTS,
         )
-        layout_base(
-            app,
-            data_login = self.user_login, 
-            children = [
-                dmc.Text("BALANCE DE COMPROBACIÓN")
-            ]
+        app.layout =  \
+        Content([
+            Grid([
+                Col([
+                    dmc.Title("BALANCE DE COMPROBACIÓN")
+                ],size= 11),
+                Col([
+                    darkModeToggle()
+                ],size= 1)
+            ])
+            
+            
+        ])
+        app.clientside_callback(
+        """
+        function(checked) {
+                if (checked) {
+                    return {"colorScheme": "light"};
+                } else {
+                    return {"colorScheme": "dark"};
+                }
+        }
+        """,
+        Output('themeHolder','theme'),
+        [Input('themeSwitch','checked'),]    
         )
+            
         return app
     
     def finanzas_balance_ap(self, code: str):

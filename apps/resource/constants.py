@@ -4,13 +4,12 @@ EXTERNAL_SCRIPTS = [
     "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.8/dayjs.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.8/locale/es.min.js",
    #/static/
-    "https://raw.githubusercontent.com/Enriquezm97/file/main/dg_table.js",
     "/static/js/dashAgGridComponentFunctions.js",
 ]
 
 EXTERNAL_STYLESHEETS =  [
-    dbc.themes.BOOTSTRAP,
-    "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css",
+    #dbc.themes.BOOTSTRAP,
+    #"https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css",
     "/static/css/dashstyles.css",
 ]
 

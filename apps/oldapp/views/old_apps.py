@@ -16,7 +16,7 @@ class FinanzasBg(LoginRequiredMixin,View):
 
         #print(profile.company.avatar_profile)
         context = {
-            'dashboard': DashFinanzas(ip = IP, token=TOKEN, data_login= user_loggedin(profile)).finanzas_bg(code = code),
+            'dashboard': DashFinanzas(ip = IP, token=TOKEN).finanzas_bg(code = code),
             'code': code
         }
         return render(request,'comercial.html',context)

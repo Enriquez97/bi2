@@ -1,7 +1,9 @@
-<title>Nisira BI</title>
-<link rel="shortcut icon" href="https://www.nisira.com.pe/images/Logo/logo2.png" />
-{% load plotly_dash %}
-    
-{% plotly_header %}
-{% plotly_direct name=code %}
-{% plotly_footer %}
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+    {% load plotly_dash %}
+        
+    {% plotly_header %}
+    {% plotly_direct name=code %}
+    {% plotly_footer %}
+{%endblock%}
