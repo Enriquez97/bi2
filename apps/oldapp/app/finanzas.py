@@ -5,6 +5,7 @@ import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
 from ...resource.layouts.base import *
 from ...resource.components.toggle import darkModeToggleDash
+from ...resource.components.cards import card_id
 
 class DashFinanzas:
     def __init__(self, ip: str, token :str):#, data_login: dict
@@ -76,7 +77,17 @@ class DashFinanzas:
                 ],size= 1),
                 Col([
                     darkModeToggleDash()
-                ],size= 1)
+                ],size= 1),
+                Col([
+                    card_id(id_ = "owo1",title="owo1",height=330)
+                ],size= 5),
+                Col([
+                    card_id(id_ = "owo2",title="owo2",height=330)
+                ],size= 7),
+                Col([
+                    card_id(id_ = "owo3",title="owo3",height=330)
+                ],size= 12),
+                
             ])
             
             
