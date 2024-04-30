@@ -22,7 +22,7 @@ class DashHome:
         layout_base(app, data_login=data_login,
         children=[
             dmc.Grid([
-                    dmc.Col([html.H4("Animated GDP and population over decades")]),
+                    dmc.Col([html.H4("Nisira")]),
                     
                     #dmc.Col([dcc.Loading(dcc.Graph(id="graph",style={"height":350,"position":"absolute"},), type="cube"),]),
                 ]),
