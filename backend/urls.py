@@ -22,7 +22,7 @@ urlpatterns = [
     path('dash/',include('apps.bi.urls')),
     path('hdata/',include('apps.handler_data.urls')),
     path('hlayout/',include('apps.handler_layout.urls')),
-    path('',include('apps.management.urls')),
+    path('user/',include('apps.management.urls')),
     
-    path('app/',include('apps.oldapp.urls')),
+    path('',include('apps.oldapp.urls')),
 ]

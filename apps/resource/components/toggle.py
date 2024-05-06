@@ -13,7 +13,7 @@ def darkModeToggle():
         ),
     id='themeSwitchHolder')
 
-def darkModeToggleDash():
+def darkModeToggleDash(pl = 30,pt = 30):
     return html.Div(
         dmc.Switch(
             offLabel=DashIconify(icon="radix-icons:moon", width=20),
@@ -22,7 +22,7 @@ def darkModeToggleDash():
             id='themeSwitch',
             sx={'display':'flex', 'paddingTop':'2px'},
             persistence=True,
-            pl = 30,
-            pt = 30
+            pl = pl,
+            pt = pt
         ),
     id='themeSwitchHolder')

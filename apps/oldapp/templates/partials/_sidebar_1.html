@@ -4,22 +4,60 @@
 
     <ul class="nav">
       <li class="nav-item">
-        <a class="nav-link" href="{% url "home"%}">
+        <a class="nav-link" href="{% url "home_old"%}">
           <i class="mdi mdi-home menu-icon"></i>
           <span class="menu-title">Home</span>
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#user" aria-expanded="false" aria-controls="user">
-          <i class="mdi mdi mdi-account-multiple menu-icon"></i>
-          <span class="menu-title">Dashboards</span>
+        <a class="nav-link" data-toggle="collapse" href="#finanzas" aria-expanded="false" aria-controls="finanzas">
+          <i class="mdi mdi-chart-arc menu-icon"></i>
+          <span class="menu-title">Finanzas</span>
           <i class="menu-arrow"></i>
         </a>
-        <div class="collapse" id="user">
+        <div class="collapse" id="finanzas">
           <ul class="nav flex-column sub-menu">
             
-            <li class="nav-item"> <a class="nav-link" href="">w</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "balance-general" %}">Balance General</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "balance_ap" %}">Balance AP</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "analisis_activo" %}">Análisis del Activo</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "analisis_pasivo" %}">Análisis del Pasivo</a></li>
+
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#logistica" aria-expanded="false" aria-controls="logistica">
+          <i class="mdi mdi-glassdoor menu-icon"></i>
+          <span class="menu-title">Logistica</span>
+          <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="logistica">
+          <ul class="nav flex-column sub-menu">
+            
+            <li class="nav-item"> <a class="nav-link" href="{% url "logistica_stocks" %}">Stocks</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "estado_inventario" %}">Almacén</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "gestion_stocks" %}">Gestión Stocks</a></li>
+            
+
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#comercial" aria-expanded="false" aria-controls="comercial">
+          <i class="mdi mdi-percent menu-icon"></i>
+          <span class="menu-title">Comercial</span>
+          <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="comercial">
+          <ul class="nav flex-column sub-menu">
+            
+            <li class="nav-item"> <a class="nav-link" href="{% url "informe_ventas" %}">Informe Ventas</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "resumen_ventas" %}">Resumen Ventas</a></li>
+            
 
           </ul>
         </div>

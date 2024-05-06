@@ -281,5 +281,8 @@ PLOTLY_COMPONENTS = [
     'dash_bootstrap_templates',
 ]
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL='/login/'
+LOGIN_URL = '/user/login/'
+LOGIN_REDIRECT_URL='/user/login/'
+
+DATA_UPLOAD_MAX_MEMORY_SIZE=1000000000
+MAX_ACTIVE_TASKS  = 100
