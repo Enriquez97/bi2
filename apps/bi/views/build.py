@@ -9,10 +9,10 @@ from ...bi.app.create_dash import DashCreate
 from ...bi.app.build_dash import DashBuild
 from ...handler_data.models import StoreProcedure
 from ...bi.models import Dashboard
+from backend.mixins import SuperAdmMixin
 
 
-
-class CreateDash(LoginRequiredMixin,View):
+class CreateDash(LoginRequiredMixin,SuperAdmMixin,View):
     login_url = reverse_lazy('login')
     def get(self,request):
         code = str(uuid.uuid4())
@@ -32,7 +32,7 @@ class CreateDash(LoginRequiredMixin,View):
     
     
 
-class BuildDash(LoginRequiredMixin,View):
+class BuildDash(LoginRequiredMixin,SuperAdmMixin,View):
     login_url = reverse_lazy('login')
     def get(self,request):
         code = str(uuid.uuid4())

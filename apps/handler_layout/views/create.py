@@ -9,11 +9,12 @@ from ..app.create_layout import DashCreateLayout
 from ..app.show_layout import DashShowLayout
 from ...handler_data.models import StoreProcedure
 from ..models import KPI
+from backend.mixins import SuperAdmMixin
 
 ip_ = '68.168.108.10'
 token_ = '0U10F10O10S10F10M10D10X10Z1lpu0N10O10H10T10I1sgk0Q10D10N10D10O10Z1lpu0T10o10d10e10i10z10x10b1lpu0S10n10r10N1rtg0I10Q1njh0M10J10q10I1lpumkimkiqwslpuertsdfasdasdlpuertnjhertqwsdfgnjhmkidfgloinjhmkiloisdf'
 
-class CreateLayout(View):
+class CreateLayout(LoginRequiredMixin,SuperAdmMixin,View):
     template_name = 'create.html'
     def get(self,request):
         #owo =DataConfig.objects.all()
@@ -26,7 +27,7 @@ class CreateLayout(View):
         return render(request, 'create.html',{'dashboard':app,'code': identifiers})
 
 
-class ShowLayout(View):
+class ShowLayout(LoginRequiredMixin,SuperAdmMixin,View):
     def get(self,request):
         #owo =DataConfig.objects.all()
         kpi_layout = KPI.objects.all()

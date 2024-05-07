@@ -1,5 +1,4 @@
 from django_plotly_dash import DjangoDash
-from backend.connector import APIConnector
 from ...resource.constants import EXTERNAL_STYLESHEETS, EXTERNAL_SCRIPTS
 import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
@@ -14,11 +13,10 @@ from ...oldapp.transform import *
 from ...resource.helpers.make_task_sync import read_apis_sync
 from datetime import datetime,timedelta
 from dash_iconify import DashIconify
-
+from backend.connector import APIConnector
 class DashComercial:
-    def __init__(self, ip: str, token :str):#, data_login: dict
-        self.ip = ip
-        self.token = token
+    def __init__(self, dataframe):#, data_login: dict
+        self.dataframe = dataframe
     def comercial_informe(self, code: str):
         app = DjangoDash(
                 name = code,
@@ -26,11 +24,8 @@ class DashComercial:
                 external_scripts = EXTERNAL_SCRIPTS,
         )
         
-        dataframe = APIConnector( ip = self.ip, token = self.token).send_get_dataframe(
-                    endpoint="nsp_rpt_ventas_detallado",
-                    params=None
-        )
-        df = transform_nsp_rpt_ventas_detallado(dataframe)
+        
+        df = transform_nsp_rpt_ventas_detallado(self.dataframe)
        
         #stocks_df = transform_nsp_stocks(dataframe)
         height_layout = 310
@@ -250,7 +245,7 @@ class DashComercial:
                 closeOnEscape=True,
                 lockScroll=False,
                 withOverlay=False,
-                size="250px",
+                size="270px",
                 style={'position': 'absolute','z-index': '99999'},
                 children=[
                     dmc.Select(

@@ -10,6 +10,8 @@ from ..app.logistica import DashLogistica
 from ..app.comercial import DashComercial
 from ...resource.constants import * 
 from ...resource.helpers.make_handler_models import user_loggedin
+from asgiref.sync import sync_to_async
+from backend.connector import APIConnector
 
 class HomeOld(LoginRequiredMixin,View):
     login_url = reverse_lazy('login')
@@ -144,12 +146,14 @@ class InformeVentas(LoginRequiredMixin,View):
     def get(self,request):
         code = str(uuid.uuid4())
         profile = Profile.objects.get(user_id = self.request.user.id)
-
+        df = APIConnector( 
+            ip = profile.company.ip, 
+            token = profile.company.token
+        ).send_get_dataframe(endpoint="nsp_rpt_ventas_detallado", params=None)
         #print(profile.company.avatar_profile)
         context = {
             'dashboard': DashComercial(
-                ip = profile.company.ip, 
-                token = profile.company.token
+                dataframe = df, 
             ).comercial_informe(code = code),
             'code': code
         }
