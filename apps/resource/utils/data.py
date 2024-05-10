@@ -2,6 +2,7 @@ import base64
 import pandas as pd
 from PIL import Image
 from io import BytesIO
+import requests
 
 def mes_short(x):
     dict_mes = {1:'Ene',2:'Feb',3:'Mar',4:'Abr',5:'May',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Oct',11:'Nov',12:'Dic'}
@@ -95,3 +96,15 @@ def transform_fecha_col(df = None, col_fecha = None):
         df['Año'] =df[col_fecha].dt.year
         return df 
     #dataframe.apply(lambda x: semana_text(x['Año'], x['Semana_']),axis=1)
+def status_cliente(ip = ""):
+    try:
+        if ip == None:
+            return False
+        else:
+            response = requests.get(f"http://{ip}:3005/")
+            if response.status_code == 200:
+                return True
+            else:
+                return False
+    except:
+        return False

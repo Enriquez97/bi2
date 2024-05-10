@@ -107,7 +107,7 @@ def layout_base(app,data_login = {}, children = []):
     )
     return app
 
-def Content(child = []):
+def Content(child = [],fluid = True):
     return \
     dmc.MantineProvider(
         id="themeHolder",
@@ -115,7 +115,7 @@ def Content(child = []):
         withGlobalStyles=True,
         withNormalizeCSS=True,
         children=[
-            dmc.NotificationsProvider(dmc.Container(child,fluid=True))
+            dmc.NotificationsProvider(dmc.Container(child,fluid=fluid))
                     
         ]
     )

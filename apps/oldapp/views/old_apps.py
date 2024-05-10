@@ -12,19 +12,29 @@ from ...resource.constants import *
 from ...resource.helpers.make_handler_models import user_loggedin
 from asgiref.sync import sync_to_async
 from backend.connector import APIConnector
+from ...resource.utils.data import decoding_avatar,status_cliente
+
 
 class HomeOld(LoginRequiredMixin,View):
     login_url = reverse_lazy('login')
     def get(self,request):
         code = str(uuid.uuid4())
-        #profile = Profile.objects.get(user_id = self.request.user.id)
-        #print(profile.company.avatar_profile)
+        profile = Profile.objects.get(user_id = self.request.user.id)
+        values_login = {}
+        values_login["name_user"] = profile.name +" "+ profile.surname
+        values_login["empresa"] = profile.company.description
+        values_login["rol"] = profile.role.description
+        values_login["rubro"] = profile.company.category.description
+        values_login["avatar_profile"] = decoding_avatar(profile.avatar_profile,400,400)
+        values_login["status_service"] = status_cliente(profile.company.ip)
+        
         context = {
             'dashboard': DashHomeOld(
                 #ip = profile.company.ip, 
                 #token = profile.company.token
-            ).index(code = code),
-            'code': code
+            ).index(code = code, user_index = values_login),
+            'code': code,
+            
         }
         return render(request,'home_.html',context)
 
