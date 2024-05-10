@@ -23,6 +23,9 @@ class DashHomeOld:
             Grid([
                 Col([
                     darkModeToggleDash()
+                ]),
+                Col([
+                    dmc.Text("home",align="center")
                 ])
             ])
         ])
