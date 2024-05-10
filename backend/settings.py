@@ -18,20 +18,20 @@ pymysql.install_as_MySQLdb()
 SECRET_KEY = config('SECRET_KEY')
 #print(config('DATABASE_NAME_MYSQL'))
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_CREDENTIALS = False
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+#CORS_ALLOWED_ORIGINS = [
+#    'http://localhost:8000',
+#    'http://127.0.0.1:8000',
+#    'http://localhost:3000',
+#    'http://127.0.0.1:3000',
+#]
 
-CSRF_TRUSTED_ORIGINS = ["https://example.com"]
+#CSRF_TRUSTED_ORIGINS = ["https://example.com"]
 
 CORS_ALLOW_HEADERS = [
     'accept',
