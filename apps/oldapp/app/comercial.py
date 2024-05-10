@@ -224,11 +224,7 @@ class DashComercial:
                 external_scripts = EXTERNAL_SCRIPTS,
         )
         
-        dataframe = APIConnector( ip = self.ip, token = self.token).send_get_dataframe(
-                    endpoint="nsp_rpt_ventas_detallado",
-                    params=None
-        )
-        df = transform_nsp_rpt_ventas_detallado(dataframe)
+        df = transform_nsp_rpt_ventas_detallado(self.dataframe)
         list_year = sorted(df['Año'].astype('string').unique())
         list_tv = sorted(df['Tipo de Venta'].unique())
         #stocks_df = transform_nsp_stocks(dataframe)

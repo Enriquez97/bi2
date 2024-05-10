@@ -175,12 +175,14 @@ class ResumenVentas(LoginRequiredMixin,View):
     def get(self,request):
         code = str(uuid.uuid4())
         profile = Profile.objects.get(user_id = self.request.user.id)
-
+        df = APIConnector( 
+            ip = profile.company.ip, 
+            token = profile.company.token
+        ).send_get_dataframe(endpoint="nsp_rpt_ventas_detallado", params=None)
         #print(profile.company.avatar_profile)
         context = {
             'dashboard': DashComercial(
-                ip = profile.company.ip, 
-                token = profile.company.token
+                dataframe = df,
             ).resumen_ventas(code = code),
             'code': code
         }
