@@ -457,7 +457,7 @@ class DashLogistica:
                             card_stack()
                         ]),
                         Col([
-                            card_id(id_='bar-minv-prom',title="Estado de Inventario",height=320)
+                            card_id(id_='bar-minv-prom',title="Meses de Inventario Promedio",height=320)
 
                         ]),
                     ])
@@ -622,10 +622,15 @@ class DashLogistica:
             precio_unit_prom = saldos_alm_df.groupby(['COD_PRODUCTO'])[[col_pu]].mean().reset_index()
             precio_unit_prom = precio_unit_prom.rename(columns = {col_pu:'Precio Unitario Promedio'})
             precio_unit_prom['Precio Unitario Promedio'] = precio_unit_prom['Precio Unitario Promedio'].fillna(0).round(2)
+            print(precio_unit_prom)
             #
             consumos_alm_df = consumos_alm_df.groupby(['IDPRODUCTO'])[['CANTIDAD']].sum().reset_index()
+            print(consumos_alm_df)
             saldos_alm_group_df = saldos_alm_df.groupby(['DSC_GRUPO', 'DSC_SUBGRUPO', 'COD_PRODUCTO', 'DESCRIPCION', 'UM','MARCA'])[['PU_S','PU_D', 'STOCK', 'INV_VALMOF', 'INV_VALMEX']].sum().reset_index()
+            saldos_alm_group_df = saldos_alm_group_df[saldos_alm_group_df['STOCK']>0]
+            
             dff = saldos_alm_group_df.merge(consumos_alm_df, how='left', left_on=["COD_PRODUCTO"], right_on=["IDPRODUCTO"])
+            
             dff = dff.merge(precio_unit_prom,how='left', left_on=["COD_PRODUCTO"], right_on=["COD_PRODUCTO"])
             dff.loc[dff.MARCA =='','MARCA']='NO ESPECIFICADO'
             if find_text != None:
@@ -691,9 +696,9 @@ class DashLogistica:
                 cpm,invval,stock,consumo,total_stock,
                 bar_logistica_y1(df = df_mi_,height = 320, template=theme_),
                 #bar_logistica_y2(df = df_mi_iv,height = 320,y_col=inv_val_moneda ),
-                bar_horizontal(df = sucursal_df, height = 350, x= inv_val_moneda, y = 'SUCURSAL', name_x='Inventario Valorizado', name_y='Sucursal',title = 'Sucursal por Inventario Valorizado',color = 'rgb(95, 70, 144)', template=theme_),
-                bar_horizontal(df = almacen_df, height = 350, x= inv_val_moneda, y = 'ALMACEN', name_x='Inventario Valorizado', name_y='Almacen',title = 'Almacen por Inventario Valorizado',color ='rgb(29, 105, 150)', template=theme_),
-                bar_horizontal(df = grupo_df, height = 350, x= inv_val_moneda, y = 'DSC_GRUPO', name_x='Inventario Valorizado', name_y='Grupo Producto',title = 'Grupo Producto por Inventario Valorizado',color = 'rgb(56, 166, 165)', template=theme_),
+                bar_horizontal(df = sucursal_df, height = 350, x= inv_val_moneda, y = 'SUCURSAL', name_x='Inventario Valorizado', name_y='Sucursal',title = '',color = 'rgb(95, 70, 144)', template=theme_),
+                bar_horizontal(df = almacen_df, height = 350, x= inv_val_moneda, y = 'ALMACEN', name_x='Inventario Valorizado', name_y='Almacen',title = '',color ='rgb(29, 105, 150)', template=theme_),
+                bar_horizontal(df = grupo_df, height = 350, x= inv_val_moneda, y = 'DSC_GRUPO', name_x='Inventario Valorizado', name_y='Grupo Producto',title = '',color = 'rgb(56, 166, 165)', template=theme_),
                 df_table.to_dict("records"),
                 fields_columns(columns = df_table.columns),
                 "ag-theme-alpine" if theme == True else "ag-theme-alpine-dark",

@@ -591,7 +591,7 @@ def bar_logistica_y1(df = None, height = 450 , moneda = 'Soles', template ="plot
     )
     
     fig.update_layout(
-        title = f"<b>Meses de Inventario Promedio</b>",
+        title = f"",
         title_font_family="sans-serif", 
         title_font_size = 18,
         height = height,
@@ -601,7 +601,7 @@ def bar_logistica_y1(df = None, height = 450 , moneda = 'Soles', template ="plot
     fig.update_xaxes(tickfont=dict(size=13),showticklabels = False,title_font_family="sans-serif",title_font_size = 13,automargin=True)#,showgrid=True, gridwidth=1, gridcolor='black',
     fig.update_yaxes(tickfont=dict(size=13),showticklabels = True,title_font_family="sans-serif",title_font_size = 13,automargin=True)  
     fig.update_layout(yaxis_tickformat = ',')
-    fig.update_layout(margin=dict(r = 40, b = 40))
+    fig.update_layout(margin=dict(r = 40, b = 40 , t = 20))
     return fig
 
 def bar_logistica_y2(df = None, height = 450 , moneda = 'Soles', y_col = ''):
@@ -704,7 +704,7 @@ def bar_horizontal(df = None, height = 350 , x = '',y = '',name_x = '',name_y = 
     fig.update_xaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 12,automargin=True)#,showgrid=True, gridwidth=1, gridcolor='black',
     fig.update_yaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 12,automargin=True)  
     fig.update_layout(yaxis_tickformat = ',')
-    fig.update_layout(margin=dict(r = 20, b = 40, t = 40))
+    fig.update_layout(margin=dict(r = 20, b = 40, t = 30))
     return fig
 
 #######################################################

@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import View
+from django.views.generic import View,TemplateView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 import uuid
@@ -24,3 +24,21 @@ class Home(LoginRequiredMixin,View):
             'code': code
         }
         return render(request,'index.html',context)
+    
+
+class Error404View(TemplateView):
+    template_name = "error_404.html"
+
+
+class Error505View(TemplateView):
+    template_name = "error_500.html"
+
+    @classmethod
+    def as_error_view(cls):
+
+        v = cls.as_view()
+        def view(request):
+            r = v(request)
+            r.render()
+            return r
+        return view

@@ -3,7 +3,7 @@ from django.urls import path
 from django.urls import path, include
 from drf_yasg import openapi #new foe swagger
 from drf_yasg.views import get_schema_view as swagger_get_schema_view #new foe swagger
-
+from apps.management.views.index import Error404View,Error505View
 
 schema_view = swagger_get_schema_view(
     openapi.Info(
@@ -26,3 +26,7 @@ urlpatterns = [
     
     path('',include('apps.oldapp.urls')),
 ]
+
+handler404 = Error404View.as_view()
+
+handler500 = Error505View.as_error_view()   

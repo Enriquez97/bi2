@@ -9,6 +9,6 @@ from django.contrib.auth.models import User,AbstractUser
 class SuperAdmMixin(object):
     def dispatch(self, request, *args, **kwargs):
         user = User.objects.get(id = self.request.user.id)
-        if user.is_superuser == 'True':
+        if user.is_superuser == True:
             return super().dispatch(request, *args, **kwargs)
         return redirect('home_old')
