@@ -75,7 +75,6 @@ THIRD_PARTY_APPS = [
     'crum',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'dpd_static_support',
-    'tailwind',
 ]
 
 PROJECT_APPS = [
