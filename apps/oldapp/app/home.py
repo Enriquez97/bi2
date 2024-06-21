@@ -8,6 +8,7 @@ from ...resource.layouts.base import *
 from ...resource.helpers.make_grid import *
 from ...oldapp.utils import *
 from dash_iconify import DashIconify
+from ...management.models import Company
 
 class DashHomeOld:
     #def __init__(self, ip: str, token :str):#, data_login: dict
@@ -19,6 +20,25 @@ class DashHomeOld:
                 external_stylesheets = EXTERNAL_STYLESHEETS, 
                 external_scripts = EXTERNAL_SCRIPTS,
         )
+        def grid_left(validate_1 : bool, validate_2 : bool):
+            if validate_1 == True and validate_2 == True:
+                return dmc.Stack(
+                            spacing="xs",
+                            children=[
+                                dmc.Title("Admin test")
+                            ],
+                        )
+            else:
+                return dmc.Stack(
+                            spacing="xs",
+                            children=[
+                                dmc.Skeleton(height=50, circle=True),
+                                dmc.Skeleton(height=8),
+                                dmc.Skeleton(height=8),
+                                dmc.Skeleton(height=8, width="70%"),
+                            ],
+                        )
+            
         app.layout =  \
         Content([
             Grid([
@@ -35,7 +55,7 @@ class DashHomeOld:
                        
                            Grid([
                            Col([ dmc.Center([dmc.Avatar(src=user_index["avatar_profile"],radius="xl",size=130)])]), 
-                           Col([dmc.Center([dmc.Text(children=[user_index["name_user"]],size=23,weight=700)])]), 
+                           Col([dmc.Center([dmc.Text(children=[user_index["name_user"]],size=18,weight=700,align="center")])]), 
                            Col([dmc.Center([dmc.Text(children=[user_index["empresa"]],size=18,weight=700)])]), 
                            Col([dmc.Center([dmc.Text(children=[user_index["rol"]],size=16)])]),
                            Col([dmc.Center([dmc.Text(children=[user_index["rubro"]],size=16)])]),  
@@ -53,15 +73,7 @@ class DashHomeOld:
                 ],size=4),
                 Col([
                     dmc.Card([
-                        dmc.Stack(
-                            spacing="xs",
-                            children=[
-                                dmc.Skeleton(height=50, circle=True),
-                                dmc.Skeleton(height=8),
-                                dmc.Skeleton(height=8),
-                                dmc.Skeleton(height=8, width="70%"),
-                            ],
-                        )
+                        grid_left(user_index["is_superuser"],user_index["is_staff"])
                     ],
                         withBorder=True,
                         shadow="sm",

@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 pymysql.install_as_MySQLdb()
 
-# Quick-start development settings - unsuitable for production
+# Quick-start development settings - unsuitable for production  
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -75,6 +75,7 @@ THIRD_PARTY_APPS = [
     'crum',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'dpd_static_support',
+    'tailwind',
 ]
 
 PROJECT_APPS = [
@@ -148,7 +149,7 @@ DATABASES = {
         'USER':     config('DATABASE_USER_MYSQL'),
         'PASSWORD': config('DATABASE_PASSWORD_MYSQL'),
         'HOST':     config('DATABASE_HOST_MYSQL'),
-        'PORT':     config('DATABASE_PORT_MYSQL'),
+        'PORT':     '25060',
     }
 }
 
@@ -215,12 +216,13 @@ CHANNEL_LAYERS = {
 
 # https://medium.com/@ksarthak4ever/django-handling-periodic-tasks-with-celery-daaa2a146f14
 BROKER_URL = config('BROKER_URL')
+CELERY_BROKER_URL="amqp://rabbitmq"
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
-CELERY_ACCEPT_CONTENT = ['pickle']
-CELERY_TASK_SERIALIZER = 'pickle'
-CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-CELERY_TASK_TIME_LIMIT = 30 * 60
+#CELERY_TASK_TIME_LIMIT = 30 * 60
 
 
 ELASTICSEARCH_DSL = {

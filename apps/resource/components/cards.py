@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output,State,dash_table,no_update,clientside_callback
 from dash_iconify import DashIconify
-from .figure import create_empty
+from .figure import graph_empty,create_empty
 import dash_ag_grid as dag
 
 def card_show_layout(fig = None, name_kpi = None):
@@ -119,7 +119,10 @@ def card_id(height = 350,title ='',id_ = None, graph = True):
                 p = 2,
             ),
             dmc.CardSection(children = [
-                block
+                dmc.LoadingOverlay([
+                     block
+                ]),
+               
             ],p=0,style={'backgroundColor':'white','height':height,}),
         ],
         withBorder = True,
@@ -149,7 +152,14 @@ def card_segment(height = 350,id_ = None, id_segmented = '',value = '',data = []
                     mb=10,
                     style={'position': 'absolute','z-index': '99'},
             ),  
-            dcc.Graph(id = id_,style={"height": height},figure=create_empty(text="Esperando Datos"))
+            dmc.LoadingOverlay(
+            loaderProps={"variant": "bars", "color": "#01414b", "size": "xl"},
+            loader=dmc.Image(src="https://i.imgur.com/KIj15up.gif", alt="", caption="", width=70,height=70),
+            children=[
+                dcc.Graph(id = id_,style={"height": height},figure=graph_empty(text=''))
+            ]
+        ),
+            
         ],
         withBorder = True,
         radius = 'md',
@@ -225,3 +235,32 @@ def card_stack(id_value = '',text = 'cpm'):
             shadow='xl',
             radius='md',
         )
+    
+def cardGraph(id = ""):
+    return html.Div([
+        dmc.LoadingOverlay(
+            loaderProps={"variant": "bars", "color": "#01414b", "size": "xl"},
+            loader=dmc.Image(src="https://i.imgur.com/KIj15up.gif", alt="", caption="", width=70,height=70),
+            children=[
+                dmc.Card(
+                    children=[
+                        dmc.ActionIcon(
+                            DashIconify(icon=f"feather:{"maximize"}"), 
+                            color="blue", 
+                            variant="default",
+                            id=f"maxi_{id}",
+                            n_clicks=0,
+                            mb=10,
+                            style={'position': 'absolute','top': '4px','right': '4px','z-index': '99'},
+                        ),
+                        dcc.Graph(id=id, figure=graph_empty(text=''))# figure=graph_empty
+                    ],
+                    withBorder=True,
+                    shadow="sm",
+                    radius="md",
+                    p=0
+                ),
+            ]
+        ),
+        
+    ])

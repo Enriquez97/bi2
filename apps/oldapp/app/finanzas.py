@@ -5,12 +5,17 @@ import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
 from ...resource.layouts.base import *
 from ...resource.components.toggle import darkModeToggleDash
-from ...resource.components.cards import card_id
+from ...resource.components.cards import card_id,cardGraph
 from ...resource.components.notification import notification_update_show
 from ...oldapp.utils import *
 from ...oldapp.callback import opened_modal
-
+from dash_bootstrap_templates import load_figure_template
 from ...oldapp.transform import * 
+from .my_themes import *
+
+import plotly.io as pio
+
+
 class DashFinanzas:
     def __init__(self, ip: str, token :str):#, data_login: dict
         self.ip = ip
@@ -29,7 +34,7 @@ class DashFinanzas:
         )
         bg_df = transform_nsp_etl_situacion_financiera(df=dataframe)
         formato = bg_df['formato'].unique()
-        height_layout = 330
+        height_layout = 380
         app.layout =  \
         Content([
             html.Div([dmc.Modal(title = '', id = f"modal_{i}", fullScreen=True, zIndex=10000, size= "85%" )for i in ['activo_graph','pasivo_graph','fondo_maniobra_graph']]),
@@ -65,7 +70,7 @@ class DashFinanzas:
                         id="select-quarter",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 2),
                 Col([
@@ -75,7 +80,7 @@ class DashFinanzas:
                         id="select-month",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -85,20 +90,23 @@ class DashFinanzas:
                         id="select-coin",
                         value = "USD",
                         data= ["USD","PEN"],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
                     darkModeToggleDash()
                 ],size= 1),
                 Col([
-                    card_id(id_ = "activo_graph",title="ACTIVO",height=height_layout)
+                    cardGraph(id="activo_graph")
+                    #card_id(id_ = "activo_graph",title="ACTIVO",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "pasivo_graph",title="PASIVO",height=height_layout)
+                    cardGraph(id="pasivo_graph")
+                    #card_id(id_ = "pasivo_graph",title="PASIVO",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "fondo_maniobra_graph",title="FONDO DE MANIOBRA",height=height_layout)
+                    cardGraph(id="fondo_maniobra_graph")
+                    #card_id(id_ = "fondo_maniobra_graph",title="FONDO DE MANIOBRA",height=height_layout)
                 ],size= 12),
                 
             ]),
@@ -172,17 +180,67 @@ class DashFinanzas:
             pasivo_df = df[df['titulo1']=='PASIVO']
             pasivo_p3_df = pasivo_df.groupby(['titulo1','titulo3'])[[col_moneda]].sum().sort_values(col_moneda).reset_index()
             
-            act_pas_corr_df = df[df['titulo2'].isin(['ACTIVO CORRIENTE','PASIVO CORRIENTE'])]
-            corr_pivot_df = pd.pivot_table(act_pas_corr_df,index=['periodo','Año', 'Mes', 'Mes_num', 'Mes_', 'Trimestre'],values='saldomex',columns='titulo2',aggfunc='sum').reset_index()
-            corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVO CORRIENTE']
+            act_pas_corr_df = df[df['titulo2'].isin(['ACTIVO CORRIENTE','PASIVO CORRIENTE','ACTIVOS CORRIENTES','PASIVOS CORRIENTES'])]
+            corr_pivot_df = pd.pivot_table(act_pas_corr_df,index=['periodo','Año', 'Mes', 'Mes_num', 'Mes_', 'Trimestre'],values= col_moneda,columns='titulo2',aggfunc='sum').reset_index()
+            try:
+                corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVO CORRIENTE']
+            except:
+                corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVOS CORRIENTES']
             fondo_mani_df = corr_pivot_df.groupby(['Mes_num','Mes_'])[['Fondo de Maniobra']].sum().sort_values('Mes_num',ascending = True).reset_index()
             
             table_df = df.groupby(['Año', 'Mes', 'Mes_num', 'Mes_','titulo1','titulo2', 'titulo3'])[[col_moneda]].sum().reset_index()
             #pivot_test_df = pd.pivot_table(table_df,index=['titulo1','titulo2', 'titulo3'],values=col_moneda,columns=['Año','Mes_num'],aggfunc='sum').fillna(0).reset_index()
+            fig_2 = px.bar(activo_p3_df, x=col_moneda, y='titulo3', #color='Tipo de operación' 
+                height=height_layout, 
+                template = "plotly_white",
+                #title = ,
+                orientation='h',
+                color_discrete_sequence=px.colors.sequential.RdBu,
+                
+            )
+            fig_2.update_traces(hovertemplate='<br>'+"Activo"+': <b>%{y}</b><br>'+moneda+': <b>%{x:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white",bordercolor="darkblue"),cliponaxis=False,)
+            fig_2.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1),legend_title_text='')
+            fig_2.update_layout(xaxis_title='<b>'+moneda+'</b>',yaxis_title='<b>'+"Partida"+'</b>')
+            fig_2.update_layout(xaxis_tickformat = ',',bargap=0.20,margin=dict(r = 20, t = 40,l=20,b = 20))
+            fig_2.update_layout(title=dict(text="<b>Activo</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
+            
+            fig_3 = px.bar(pasivo_p3_df, x=col_moneda, y='titulo3', #color='Tipo de operación' 
+                height=height_layout, 
+                template = "plotly_white",
+                #title = ,
+                orientation='h',
+                #color_discrete_sequence=px.colors.qualitative.G10,
+                color_discrete_sequence=["rgb(204,102,119)"]
+                
+            )
+            fig_3.update_traces(hovertemplate='<br>'+"Pasivo"+': <b>%{y}</b><br>'+moneda+': <b>%{x:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white"),cliponaxis=False,)
+            fig_3.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1),legend_title_text='')
+            fig_3.update_layout(xaxis_title='<b>'+moneda+'</b>',yaxis_title='<b>'+"Partida"+'</b>')
+            fig_3.update_layout(xaxis_tickformat = ',',bargap=0.20,margin=dict(r = 20, t = 40,l=20,b = 20))
+            fig_3.update_layout(title=dict(text="<b>Pasivo</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
+            
+            
+            fig_4 = px.bar(fondo_mani_df, x='Mes_', y='Fondo de Maniobra', #color='Tipo de operación' 
+                height=height_layout, 
+                template = "plotly_white",
+                #title = ,
+                orientation='v',
+                #color_discrete_sequence=px.colors.qualitative.G10,
+                color_discrete_sequence=["rgb(93,105,177)"]
+                
+            )
+            fig_4.update_traces(hovertemplate='<br>'+"Fondo de Maniobra"+': <b>%{x}</b><br>'+moneda+': <b>%{y:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white"),cliponaxis=False,)
+            fig_4.update_layout(legend=dict(orientation="v",yanchor="bottom",y=1.02,xanchor="right",x=1),legend_title_text='')
+            fig_4.update_layout(xaxis_title='<b>'+"Mes"+'</b>',yaxis_title='<b>'+moneda+'</b>')
+            fig_4.update_layout(yaxis_tickformat = ',',bargap=0.20,margin=dict(r = 20, t = 40,l=20,b = 20))
+            fig_4.update_layout(title=dict(text="<b>Fondo de Maniobra</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
             return [
-                bar_hor(df = activo_p3_df, height = height_layout, x= col_moneda, y = 'titulo3', name_x=moneda, name_y='Activo',title = '',color = '#4543E6',template=theme_),
-                bar_hor(df = pasivo_p3_df, height = height_layout, x= col_moneda, y = 'titulo3', name_x=moneda, name_y='Pasivo',title = '',color = '#7EC2EB',template=theme_),
-                bar_ver(df = fondo_mani_df, height = height_layout, x = 'Mes_',y='Fondo de Maniobra',name_x='Mes',name_y='Fondo de Maniobra',title = '',color = '#4374E6',template=theme_),
+                #bar_hor(df = activo_p3_df, height = height_layout, x= col_moneda, y = 'titulo3', name_x=moneda, name_y='Activo',title = '',color = '#4543E6',template=theme_),
+                fig_2,
+                #bar_hor(df = pasivo_p3_df, height = height_layout, x= col_moneda, y = 'titulo3', name_x=moneda, name_y='Pasivo',title = '',color = '#7EC2EB',template=theme_),
+                fig_3,
+                fig_4
+                #bar_ver(df = fondo_mani_df, height = height_layout, x = 'Mes_',y='Fondo de Maniobra',name_x='Mes',name_y='Fondo de Maniobra',title = '',color = '#4374E6',template=theme_),
 
             ]
         opened_modal(app = app, id="activo_graph",height_modal=900)
@@ -198,7 +256,7 @@ class DashFinanzas:
         )
         dataframe = APIConnector( ip = self.ip, token = self.token).send_get_dataframe(
                     endpoint="nsp_etl_situacion_financiera",
-                    params=None
+                    params=None 
         )
         bg_df = transform_nsp_etl_situacion_financiera(df=dataframe)
         formato = bg_df['formato'].unique()
@@ -238,7 +296,7 @@ class DashFinanzas:
                         id="select-quarter",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 2),
                 Col([
@@ -248,7 +306,7 @@ class DashFinanzas:
                         id="select-month",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -265,16 +323,20 @@ class DashFinanzas:
                     darkModeToggleDash()
                 ],size= 1),
                 Col([
-                    card_id(id_ = "ap-pie-graph",title="ACTIVO & PASIVO",height=height_layout)
+                    cardGraph(id="ap-pie-graph")
+                    #card_id(id_ = "ap-pie-graph",title="ACTIVO & PASIVO",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "avsp-line-graph",title="ACTIVO vs PASIVO",height=height_layout)
+                    cardGraph(id="avsp-line-graph")
+                    #card_id(id_ = "avsp-line-graph",title="ACTIVO vs PASIVO",height=height_layout)
                 ],size= 8),
                 Col([
-                    card_id(id_ = "comp-pasivo-graph",title="COMPOSICIÓN DEL PASIVO",height=height_layout)
+                    cardGraph(id="comp-pasivo-graph")
+                    #card_id(id_ = "comp-pasivo-graph",title="COMPOSICIÓN DEL PASIVO",height=height_layout)
                 ],size= 12),
                 Col([
-                    card_id(id_ = "comp-activo-graph",title="COMPOSICIÓN DEL ACTIVO",height=height_layout)
+                    cardGraph(id="comp-activo-graph")
+                    #card_id(id_ = "comp-activo-graph",title="COMPOSICIÓN DEL ACTIVO",height=height_layout)
                 ],size= 12),
                 
             ]),
@@ -365,12 +427,13 @@ class DashFinanzas:
             fig_activo.update_xaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 11,automargin=True) 
             fig_activo.update_yaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 11,automargin=True)
             fig_activo.update_layout(
-                margin = dict( l = 20, r = 40, b = 50, t = 20),
+                margin = dict( l = 20, r = 40, b = 50, t = 40),
                 xaxis_title = '<b>'+'Mes'+'</b>',
                 yaxis_title = '<b>'+''+'</b>',
                 legend=dict(font=dict(size=11))
             )                                                                           #'%{customdata}%'
             fig_activo.update_traces(hovertemplate='<br><b>%{x}</b><br><b>%{customdata[0]}</b><br><b>%{y:,.2f}</b>',hoverlabel=dict(font_size=13,bgcolor='rgba(255,255,255,0.75)',font_family="sans-serif",font_color = 'black'))
+            fig_activo.update_layout(title=dict(text="<b>Composición del Activo</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
             
             
             pasivo_df = df[df['titulo1']=='PASIVO']
@@ -383,18 +446,18 @@ class DashFinanzas:
             fig_pasivo.update_xaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 11,automargin=True) 
             fig_pasivo.update_yaxes(tickfont=dict(size=11),showticklabels = True,title_font_family="sans-serif",title_font_size = 11,automargin=True)
             fig_pasivo.update_layout(
-                margin = dict( l = 20, r = 40, b = 50, t = 20,),
+                margin = dict( l = 20, r = 40, b = 50, t = 40,),
                 xaxis_title = '<b>'+'Mes'+'</b>',
                 yaxis_title = '<b>'+''+'</b>',
                 legend=dict(font=dict(size=11))
             )
             fig_pasivo.update_traces(hovertemplate='<br><b>%{x}</b><br><b>%{customdata[0]}</b><br><b>%{y:,.2f}</b>', hoverlabel=dict(font_size=13,bgcolor='rgba(255,255,255,0.75)',font_family="sans-serif",font_color = 'black'))
-            
+            fig_pasivo.update_layout(title=dict(text="<b>Composición del Pasivo</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
             return [pie_(
                         df = ap_df, 
                         label_col = 'titulo1', 
                         value_col = col_moneda, 
-                        title = '',
+                        title = 'ACTIVO & PASIVO',
                         height=height_layout,
                         showlegend = True,
                         #color_list=['#ccaa14','#7a9c9f'],
@@ -405,7 +468,7 @@ class DashFinanzas:
                         template = theme_
                     ),
                     
-                    figure_n_traces(df = line_pivot_dff, height = height_layout , trace = ['ACTIVO','PASIVO'],colors = ['#7a9c9f','#ccaa14'],ejex=['Year-Month'],hover_unified=True,template = theme_),
+                    figure_n_traces(df = line_pivot_dff, height = height_layout , trace = ['ACTIVO','PASIVO'],colors = ['#7a9c9f','#ccaa14'],ejex=['Year-Month'],hover_unified=True,template = theme_,title="Activo vs Pasivo"),
                     fig_activo,
                     fig_pasivo,
                     
@@ -468,7 +531,7 @@ class DashFinanzas:
                         id="select-quarter",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -478,7 +541,7 @@ class DashFinanzas:
                         id="select-month",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -495,16 +558,20 @@ class DashFinanzas:
                     darkModeToggleDash()
                 ],size= 1),
                 Col([
-                    card_id(id_ = "activo-graph",title="ACTIVO",height=height_layout)
+                    cardGraph(id="activo-graph")
+                    #card_id(id_ = "activo-graph",title="ACTIVO",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "actvant-graph",title="ACTIVO - AÑO COMPARATIVO",height=height_layout)
+                    cardGraph(id="actvant-graph")
+                    #card_id(id_ = "actvant-graph",title="ACTIVO - AÑO COMPARATIVO",height=height_layout)
                 ],size= 8),
                 Col([
-                    card_id(id_ = "corr-ncorr-graph",title="ACTIVO CORRIENTE VS NO CORRIENTE",height=height_layout)
+                    cardGraph(id="corr-ncorr-graph")
+                    #card_id(id_ = "corr-ncorr-graph",title="ACTIVO CORRIENTE VS NO CORRIENTE",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "cuentas-act-graph",title="CUENTAS DE ACTIVOS",height=height_layout)
+                    cardGraph(id="cuentas-act-graph")
+                    #card_id(id_ = "cuentas-act-graph",title="CUENTAS DE ACTIVOS",height=height_layout)
                 ],size= 6),
                 
             ]),
@@ -584,22 +651,24 @@ class DashFinanzas:
             act2_pv_df['Year-Month'] = act2_pv_df['Año'] +'-'+ act2_pv_df['Mes_']
             
             act4_df = activo_dff.groupby(['titulo4'])[[col_moneda]].sum().sort_values(col_moneda).reset_index()
+            
+
             return [pie_(
                     df = ap_df, 
                     label_col = 'titulo2', 
                     value_col = col_moneda, 
-                    title = '',
+                    title = 'Activo',
                     height=height_layout,
                     showlegend = True,
-                    dict_color={'ACTIVO CORRIENTE':'#2B4CEA','ACTIVO NO CORRIENTE':'#974EE6'},
+                    dict_color={'ACTIVO CORRIENTE':'#2B4CEA','ACTIVO NO CORRIENTE':'#974EE6','ACTIVOS NO CORRIENTES':'#974EE6'},
                     hole = .6,
                     textinfo = 'percent+value',
                     textposition='outside',
                     template=theme_
                 ),
-                figure_n_traces(df = year_df, height = height_layout , trace = sorted(year_act_df['Año'].unique()),colors = colors_,ejex=['Mes_'],template=theme_),
-                figure_n_traces(df = act2_pv_df, height = height_layout , trace = act2_df['titulo2'].unique(),colors = colors_,ejex=['Year-Month'],template=theme_),
-                bar_ver(df = act4_df, height = height_layout , x = 'titulo4',y = col_moneda,name_x = '',name_y = 'Saldos',color = '#3aa99b', title = '',showticklabels_x = False,botton_size = None,template=theme_)
+                figure_n_traces(df = year_df, height = height_layout , trace = sorted(year_act_df['Año'].unique()),colors = colors_,ejex=['Mes_'],template=theme_,title="Activo - Año Comparativo"),
+                figure_n_traces(df = act2_pv_df, height = height_layout , trace = act2_df['titulo2'].unique(),colors = colors_,ejex=['Year-Month'],template=theme_,title="Activo - Corriente vs No Corriente"),
+                bar_ver(df = act4_df, height = height_layout , x = 'titulo4',y = col_moneda,name_x = '',name_y = 'Saldos',color = '#3aa99b', title = 'Cuentas de Activos',showticklabels_x = False,botton_size = None,template=theme_)
                 ]
         opened_modal(app, id="activo-graph",height_modal=900)
         opened_modal(app, id="actvant-graph",height_modal=900)
@@ -659,7 +728,7 @@ class DashFinanzas:
                         id="select-quarter",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -669,7 +738,7 @@ class DashFinanzas:
                         id="select-month",
                         value = None,
                         data= [],
-                        clearable=False
+                        clearable=True
                     )
                 ],size= 1),
                 Col([
@@ -686,16 +755,20 @@ class DashFinanzas:
                     darkModeToggleDash()
                 ],size= 1),
                 Col([
-                    card_id(id_ = "pasivo-graph",title="PASIVO",height=height_layout)
+                    cardGraph(id="pasivo-graph")
+                    #card_id(id_ = "pasivo-graph",title="PASIVO",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "pasvant-graph",title="PASIVO- AÑO COMPARATIVO",height=height_layout)
+                    cardGraph(id="pasvant-graph")
+                    #card_id(id_ = "pasvant-graph",title="PASIVO- AÑO COMPARATIVO",height=height_layout)
                 ],size= 8),
                 Col([
-                    card_id(id_ = "corr-ncorr-graph",title="PASIVO CORRIENTE VS NO CORRIENTE",height=height_layout)
+                    cardGraph(id="corr-ncorr-graph")
+                    #card_id(id_ = "corr-ncorr-graph",title="PASIVO CORRIENTE VS NO CORRIENTE",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "cuentas-pas-graph",title="CUENTAS DE PASIVOS",height=height_layout)
+                    cardGraph(id="cuentas-pas-graph")
+                    #card_id(id_ = "cuentas-pas-graph",title="CUENTAS DE PASIVOS",height=height_layout)
                 ],size= 6),
                 
             ]),
@@ -780,18 +853,18 @@ class DashFinanzas:
                     df = ap_df, 
                     label_col = 'titulo2', 
                     value_col = col_moneda, 
-                    title = '',
+                    title = 'Pasivo', 
                     height=height_layout,
                     showlegend = True,
-                    dict_color={'PASIVO CORRIENTE':'#2B4CEA','PASIVO NO CORRIENTE':'#974EE6'},
+                    dict_color={'PASIVO CORRIENTE':'#2B4CEA','PASIVO NO CORRIENTE':'#974EE6','PASIVOS CORRIENTES':'#2B4CEA','PASIVOS NO CORRIENTES':'#974EE6'},
                     hole = .6,
                     textinfo = 'percent+value',
                     textposition='outside',
                     template=theme_
                 ),
-                figure_n_traces(df = year_df, height = height_layout , trace = sorted(year_act_df['Año'].unique()),colors = colors_,ejex=['Mes_'],template=theme_),
-                figure_n_traces(df = pas2_pv_df, height = height_layout , trace = pas2_df['titulo2'].unique(),colors = colors_,ejex=['Year-Month'],template=theme_),
-                bar_ver(df = pas4_df, height = height_layout , x = 'titulo4',y = col_moneda,name_x = '',name_y = 'Saldos',color = '#3aa99b', title = '',showticklabels_x = False,botton_size = 50,template=theme_)
+                figure_n_traces(df = year_df, height = height_layout , trace = sorted(year_act_df['Año'].unique()),colors = colors_,ejex=['Mes_'],template=theme_,title="Pasivo - Año Comparativo"),
+                figure_n_traces(df = pas2_pv_df, height = height_layout , trace = pas2_df['titulo2'].unique(),colors = colors_,ejex=['Year-Month'],template=theme_,title="Pasivo - Corriente vs No Corriente"),
+                bar_ver(df = pas4_df, height = height_layout , x = 'titulo4',y = col_moneda,name_x = '',name_y = 'Saldos',color = '#3aa99b', title = 'Cuentas de Pasivos',showticklabels_x = False,botton_size = 50,template=theme_)
             ]
         opened_modal(app, id="pasivo-graph",height_modal=900)
         opened_modal(app, id="pasvant-graph",height_modal=900)

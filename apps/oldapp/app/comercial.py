@@ -4,7 +4,7 @@ import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
 from ...resource.layouts.base import *
 from ...resource.components.toggle import darkModeToggleDash
-from ...resource.components.cards import card_id,card_segment,card_stack
+from ...resource.components.cards import card_id,card_segment,card_stack,cardGraph
 from ...resource.components.notification import notification_update_show
 from ...oldapp.utils import *
 from ...resource.components.datepicker import datepicker_alm
@@ -14,6 +14,7 @@ from ...resource.helpers.make_task_sync import read_apis_sync
 from datetime import datetime,timedelta
 from dash_iconify import DashIconify
 from backend.connector import APIConnector
+
 class DashComercial:
     def __init__(self, dataframe):#, data_login: dict
         self.dataframe = dataframe
@@ -112,19 +113,24 @@ class DashComercial:
                     )
                 ],size= 1),
                 Col([
-                    card_id(id_ = "bar-comercial-productos",title="Productos más Vendidos",height=height_layout)
+                    cardGraph(id ="bar-comercial-productos" )
+                    #card_id(id_ = "bar-comercial-productos",title="Productos más Vendidos",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "pie-comercial-pais",title="País",height=height_layout)
+                    cardGraph(id = "pie-comercial-pais")
+                    #card_id(id_ = "pie-comercial-pais",title="País",height=height_layout)
                 ],size= 3),
                 Col([
-                    card_id(id_ = "pie-comercial-vendedor",title="Vendedor",height=height_layout)
+                    cardGraph(id = "pie-comercial-vendedor")
+                    #card_id(id_ = "pie-comercial-vendedor",title="Vendedor",height=height_layout)
                 ],size= 3),
                 Col([
-                    card_id(id_ = "bar-comercial-mes",title="Ventas por Mes",height=height_layout)
+                    cardGraph(id ="bar-comercial-mes")
+                    #card_id(id_ = "bar-comercial-mes",title="Ventas por Mes",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "funnel-comercial-selector_second",title="Grupo Producto más vendido",height=height_layout)
+                    cardGraph(id = "funnel-comercial-selector_second")
+                    #card_id(id_ = "funnel-comercial-selector_second",title="Grupo Producto más vendido",height=height_layout)
                 ],size= 6),
             ]),
             html.Div(id='notifications-update-data'),
@@ -199,16 +205,16 @@ class DashComercial:
             vendedor_df = df.groupby(['Vendedor'])[[importe]].sum().sort_values(importe,ascending=True).reset_index()
             return[
             bar_comercial(df=productos_df_20, x= importe, y= 'Producto',orientation= 'h', height = height_layout, 
-              title= '', customdata=['Grupo Producto','Subgrupo Producto'],space_ticked= 180, text= importe,
+              title= 'Productos más Vendidos', customdata=['Grupo Producto','Subgrupo Producto'],space_ticked= 100, text= importe,
                 xaxis_title = importe, template= theme_,left=30
             ),
             bar_comercial(df=meses_df_12, x= 'Mes', y= importe,orientation= 'v', height = height_layout, 
-                title= '', customdata=['Porcentaje'],space_ticked= 50, text= importe, yaxis_title= importe,xaxis_title= 'Mes',
+                title= 'Ventas por Mes', customdata=['Porcentaje'],space_ticked= 50, text= importe, yaxis_title= importe,xaxis_title= 'Mes',
                 template=theme_,
             ),
-            funnel_comercial(df = grupo_producto_df, x = importe, y = 'Grupo Producto', height = height_layout,xaxis_title = importe, yaxis_title = 'Grupo Producto', title = '',template=theme_),
-            pie_comercial(df = pais_df, title = '',label_col = 'Pais', value_col = importe, height = height_layout, showlegend=False,textfont_size = 10,template=theme_),
-            pie_comercial(df = vendedor_df, title = '',label_col = 'Vendedor', value_col = importe, height = height_layout, showlegend=False,textfont_size = 10,template=theme_)
+            funnel_comercial(df = grupo_producto_df, x = importe, y = 'Grupo Producto', height = height_layout,xaxis_title = importe, yaxis_title = 'Grupo Producto', title = 'Grupo Producto más vendido',template=theme_),
+            pie_comercial(df = pais_df, title = 'País',label_col = 'Pais', value_col = importe, height = height_layout, showlegend=False,textfont_size = 10,template=theme_,color_list=px.colors.sequential.Teal),
+            pie_comercial(df = vendedor_df, title = 'Vendedor',label_col = 'Vendedor', value_col = importe, height = height_layout, showlegend=False,textfont_size = 10,template=theme_,color_list=px.colors.sequential.Teal)
             ]
         
         opened_modal(app = app, id="bar-comercial-productos",height_modal=900)
@@ -330,22 +336,28 @@ class DashComercial:
                     darkModeToggleDash()
                 ],size = 1),
                 Col([
-                    card_id(id_ = "pie_tipo_venta",title="Ventas por Tipo",height=height_layout)
+                    cardGraph(id = "pie_tipo_venta"),
+                    #card_id(id_ = "pie_tipo_venta",title="Ventas por Tipo",height=height_layout)
                 ],size = 4),
                 Col([
-                    card_id(id_ = "bar_gp",title="Ventas por Grupo Producto",height=height_layout)
+                    cardGraph(id = "bar_gp"),
+                    #card_id(id_ = "bar_gp",title="Ventas por Grupo Producto",height=height_layout)
                 ],size = 4),
                 Col([
-                    card_id(id_ = "bar_gc",title="Ventas por Grupo Cliente",height=height_layout)
+                    cardGraph(id = "bar_gc"),
+                    #card_id(id_ = "bar_gc",title="Ventas por Grupo Cliente",height=height_layout)
                 ],size = 4),
                 Col([
-                    card_id(id_ = "bar_cliente_top",title="Ventas por Cliente (Top 20)",height=height_layout)
+                    cardGraph(id = "bar_cliente_top"),
+                    #card_id(id_ = "bar_cliente_top",title="Ventas por Cliente (Top 20)",height=height_layout)
                 ],size = 4),
                 Col([
-                    card_id(id_ = "bar_producto_top",title="Ventas por Producto (Top 20)",height=height_layout)
+                    cardGraph(id = "bar_producto_top"),
+                    #card_id(id_ = "bar_producto_top",title="Ventas por Producto (Top 20)",height=height_layout)
                 ],size = 4),
                 Col([
-                    card_id(id_ = "bar_mes",title="Ventas por Mes",height=height_layout)
+                    cardGraph(id = "bar_mes"),
+                    #card_id(id_ = "bar_mes",title="Ventas por Mes",height=height_layout)
                 ],size = 4),
             ]),
             html.Div(id='notifications-update-data'),
@@ -433,18 +445,20 @@ class DashComercial:
                 df = tv_df, 
                 label_col = 'Tipo de Venta', 
                 value_col = moneda, 
-                title = '',
+                title = 'Ventas por Tipo',
                 height=height_layout,
                 showlegend = False,
-                template=theme_
+                template=theme_,
+                color_list=px.colors.qualitative.Safe
+                
                 #color_list= dara_colores,
                 #hole = .8
                 ),
-                bar_chart(df = gp_df, x = moneda, y = 'Grupo Producto', height=height_layout, titulo = '',color ='#306c9a', orientacion = 'h', template=theme_),
-                bar_chart(df = gc_df, x = moneda, y = 'Grupo Cliente', height=height_layout, titulo = '',color ='#61abe3', orientacion = 'h',template=theme_),
-                bar_chart(df = client_top_df, x = moneda, y = 'Cliente', height=height_layout, titulo = '',color ='#5ccbc2', orientacion = 'h',template=theme_),
-                bar_chart(df = product_top_df, x = moneda, y = 'Producto', height=height_layout, titulo = '',color ='#e2c5c5', orientacion = 'h',template=theme_),
-                bar_chart(df = meses_df, x = 'Mes', y = moneda, height=height_layout, titulo = '',color ='#5f6b6d', orientacion = 'v',template=theme_),
+                bar_chart(df = gp_df, x = moneda, y = 'Grupo Producto', height=height_layout, titulo = "Ventas por Grupo Producto",color ='#306c9a', orientacion = 'h', template=theme_),
+                bar_chart(df = gc_df, x = moneda, y = 'Grupo Cliente', height=height_layout, titulo = "Ventas por Grupo Cliente",color ='#61abe3', orientacion = 'h',template=theme_),
+                bar_chart(df = client_top_df, x = moneda, y = 'Cliente', height=height_layout, titulo = 'Ventas por Cliente (Top 20)',color ='#5ccbc2', orientacion = 'h',template=theme_),
+                bar_chart(df = product_top_df, x = moneda, y = 'Producto', height=height_layout, titulo = 'Ventas por Producto (Top 20)',color ='#e2c5c5', orientacion = 'h',template=theme_),
+                bar_chart(df = meses_df, x = 'Mes', y = moneda, height=height_layout, titulo = 'Ventas por Mes',color ='#5f6b6d', orientacion = 'v',template=theme_),
             ]
         opened_modal(app = app, id="pie_tipo_venta",height_modal=900)
         opened_modal(app = app, id="bar_gp",height_modal=900)

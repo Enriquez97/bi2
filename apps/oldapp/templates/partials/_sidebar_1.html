@@ -29,6 +29,24 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false" aria-controls="config">
+          <i class="mdi mdi mdi-account-multiple menu-icon"></i>
+          <span class="menu-title">Administrador</span>
+          <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="config">
+          <ul class="nav flex-column sub-menu">
+            
+            <li class="nav-item"> <a class="nav-link" href="{% url "usuarios" %}">Gestión - Usuarios</a></li>
+            {% if user.is_staff == True and user.is_superuser == True and user.is_active == True %}
+              <li class="nav-item"> <a class="nav-link" href="{% url "empresas" %}">Gestión - Empresas</a></li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#logistica" aria-expanded="false" aria-controls="logistica">
           <i class="mdi mdi-glassdoor menu-icon"></i>
           <span class="menu-title">Logistica</span>
@@ -57,7 +75,7 @@
             
             <li class="nav-item"> <a class="nav-link" href="{% url "informe_ventas" %}">Informe Ventas</a></li>
             <li class="nav-item"> <a class="nav-link" href="{% url "resumen_ventas" %}">Resumen Ventas</a></li>
-            
+            <li class="nav-item"> <a class="nav-link" href="{% url "comercial" %}">Comercial</a></li>
 
           </ul>
         </div>

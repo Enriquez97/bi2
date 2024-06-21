@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User,AbstractUser
 import uuid
 
+OPCIONES_TIPO_CN = [
+        ('Api', 'Api'),
+        ('Server Sql', 'Server Sql'),
+]
+
 class Role(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description= models.CharField(max_length=50, blank=True,null=True)
@@ -31,9 +36,18 @@ class Company(models.Model):
     ip = models.CharField(max_length=255,null=True)
     puerto = models.CharField(max_length=255,default='1433',null=True)
     token = models.CharField(max_length=255,null=True)
+    
+    server = models.CharField(max_length=255,null=True)
+    database = models.CharField(max_length=255,null=True)
+    uid = models.CharField(max_length=255,null=True)
+    uid_pass = models.CharField(max_length=255,null=True)
+    driver = models.CharField(max_length=255,null=True,default='ODBC Driver 17 for SQL Server')
+    type_con = models.CharField(max_length=50, choices=OPCIONES_TIPO_CN, default='Api',null=True)
+    
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     create = models.DateTimeField(auto_now_add=True,null=True)
     modified = models.DateTimeField(auto_now=True,null=True)
+    
     
     def __str__(self):
         return self.description

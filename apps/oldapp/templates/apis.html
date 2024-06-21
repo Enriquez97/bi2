@@ -1,0 +1,22 @@
+{% load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
+    <title>Data from API</title>
+    <style>
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>UUID Generado: {{ unique_id }}</h1>
+
+    <h2>Datos de la API (JSON)</h2>
+    <pre>{{ api_data_json|safe }}</pre>
+</body>
+</html>

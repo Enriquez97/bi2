@@ -16,6 +16,15 @@ from ..model.create import createDataConfig
 
 import plotly.express as px
 
+getRowStyle = {
+    "styleConditions": [
+        {
+            "condition": "params.data.Estado == 'Inactive'",
+            "style": {"backgroundColor": "red"},
+        },
+    ],
+    #"defaultStyle": {"backgroundColor": "black", "color": "white"},
+}
 
 class DashExplorerData:
     def __init__(self, ip: str, token :str):
@@ -43,105 +52,102 @@ class DashExplorerData:
             app,
             data_login = data_login, 
             children = [
-                            html.Div(id="notifications-save"),
-                        
-                        
-                            dmc.Grid(
-                                children=[
-                                    dmc.Col(
-                                        dmc.Title(
-                                            children=[
-                                                "Transformación - Datos"
-                                            ],
-                                            align="center",
-                                            order = 1
-                                        )
-                                    
-                                    , span=6),
-                                    dmc.Col(
-                                        dmc.Select(
-                                            label="Select Store Procedure",
-                                            placeholder="Select",
-                                            id="select-sp",
-                                            value= sp_list[0],
-                                            data = sp_list,
-                                            
-                                            clearable=False
-                                        )
-                                    
-                                    , span=3),
-                                    dmc.Col(
-                                        dmc.Button(
-                                            "Load from SP",
-                                            id="loading-button",
-                                            leftIcon=DashIconify(icon="fluent:database-plug-connected-20-filled"),
-                                            mt = 21
-                                        )
-                                    , span=3),
+                html.Div(id="notifications-save"),
+                    dmc.Grid(
+                        children=[
+                            dmc.Col(
+                                dmc.Title(
+                                    children=[
+                                        "Transformación - Datos"
+                                    ],
+                                    align="center",
+                                    order = 1
+                                )
+                                , span=6),
+                            dmc.Col(
+                                dmc.Select(
+                                    label="Select Store Procedure",
+                                    placeholder="Select",
+                                    id="select-sp",
+                                    value= sp_list[0],
+                                    data = sp_list,
+                                    clearable=False
+                                )
+                                , span=3),
+                            dmc.Col(
+                                dmc.Button(
+                                    "Load from SP",
+                                    id="loading-button",
+                                    leftIcon=DashIconify(icon="fluent:database-plug-connected-20-filled"),
+                                    mt = 21
+                                )
+                                , span=3),
                                     #dmc.Col(dmc.Text(id="clicked-output", mt=10), span=5),
-                                ],
-                                gutter="xl",
-                            ),
-                            
-                            stats_data(),
-                            
+                        ],
+                         gutter="xl",
+                    ),
+                    dcc.Store(id='data-cols'),
+                    #######################TABS GENERAL
+                    dmc.Tabs(
+                        [
+                        dmc.TabsList(
+                            [
+                            dmc.Tab("Configurar Data", value="1"),
+                            dmc.Tab("Revisar Data", value="2"),
+                                        
+                            ],
+                            grow=True
+                        ),
+                        dmc.TabsPanel(children=[
                             dmc.Accordion(
-                                
                                 children=[
                                     dmc.AccordionItem(
                                         [
-                                            dmc.AccordionControl("Clean"),
-                                            dmc.AccordionPanel(
-                                                dmc.Grid([
-                                                    dmc.Col([
-                                                        dmc.Select(
-                                                            label="Campo Fecha",
-                                                            placeholder="Select",
-                                                            id="select-col-fecha",
-                                                            clearable=False,
-                                                            searchable=True
-                                                        ),
-                                                    ],span=2),
-                                                    dmc.Col([
-                                                        dmc.Button(
-                                                            "Crear Columnas",
-                                                            id="btn-create-time-columns",
-                                                            #leftIcon=DashIconify(icon="fluent:database-plug-connected-20-filled"),
-                                                            mt = 21,
-                                                            color="gray"
-                                                        )
-                                                    ],span=2)
-                                                ],gutter="xs"),
-                                                
-                                            ),
+                                        dmc.AccordionControl("Clean"),
+                                        dmc.AccordionPanel(
+                                            dmc.Grid([
+                                                dmc.Col([
+                                                    dmc.Select(
+                                                        label="Campo Fecha",
+                                                        placeholder="Select",
+                                                        id="select-col-fecha",
+                                                        clearable=False,
+                                                        searchable=True
+                                                    ),
+                                                ],span=2),
+                                                dmc.Col([
+                                                    dmc.Button(
+                                                        "Crear Columnas",
+                                                        id="btn-create-time-columns",
+                                                        mt = 21,
+                                                        color="gray"
+                                                    )
+                                                ],span=2)
+                                            ],gutter="xs"),
+                                        ),
                                         ],
                                         value="table",
                                         m =10,
                                     ),
-                                    
+                                            
                                 ],
                             ),
-                        #dcc.Store(id='data-values'),
-                        dcc.Store(id='data-cols'),
-                        #html.Div(id = "table-data-config"),
-                        dmc.LoadingOverlay(
-                            children=[
-                                dag.AgGrid(
-                                    id = "grid-cell-data-types",
-                                    dashGridOptions={"animateRows": False},
-                                    #className="ag-theme-alpine-dark",
-                                    columnSize="sizeToFit",
-                                    defaultColDef={"flex": 1},
-                                    className="ag-theme-alpine dbc-ag-grid"
-                                    
-                                ), 
-                            ],
-                            loaderProps={"variant": "dots", "color": "orange", "size": "xl"},
-                        ),
-                        
-                        html.Pre(id="output-cell-data-types"),
-                        dcc.Download(id="download"),
-                        dmc.Grid(
+                            dmc.LoadingOverlay(
+                                children=[
+                                    dag.AgGrid(
+                                        id = "grid-cell-data-types",
+                                        dashGridOptions={"animateRows": False},
+                                        columnSize="sizeToFit",
+                                        defaultColDef={"flex": 1},
+                                        className="ag-theme-alpine dbc-ag-grid",
+                                        getRowStyle = getRowStyle
+                                    ), 
+                                ],
+                                loaderProps={"variant": "dots", "color": "orange", "size": "xl"},
+                            ),
+                            html.Pre(id="output-cell-data-types"),
+                            dcc.Download(id="download"),
+                            dmc.Grid(
                                 children=[
                                     dmc.Col(dmc.Button(
                                         id = 'btn-save',
@@ -160,9 +166,15 @@ class DashExplorerData:
                                 ],
                                 gutter="xs"
                             ),
-                        
+                        ], value="1"),
+                        dmc.TabsPanel(children=[
+                            stats_data(),
+                        ], value="2"),     
+                    ],
+                    color="blue",
+                    value="1",
+                ),      
             ]
-        
         )
         
         app.clientside_callback(
@@ -186,8 +198,8 @@ class DashExplorerData:
              Output("stat-num","children"),
              Output("stat-fecha","children"),
              Output("loading-button", "loading"),
-             Output("grid-cell-data-types","columnDefs"),
-             Output("grid-cell-data-types","rowData"),
+                Output("grid-cell-data-types","columnDefs"),
+                Output("grid-cell-data-types","rowData"),
              #Output("download", "data"),
              #Output("output-cell-data-types", "children"),
              Output("data-cols","data"),

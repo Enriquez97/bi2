@@ -76,23 +76,6 @@ services:
     networks:
       - elastic
 
-  rabbitmq:
-    platform: 'linux/amd64'
-    image: rabbitmq:3.13-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"  # Puerto para la comunicación AMQP
-      - "15672:15672"  # Puerto para el panel de control web de RabbitMQ (opcional, con el tag management)
-    volumes:
-      - ../:/home/nisira-bi
-    environment:
-      - RABBITMQ_DEFAULT_USER=nisira  # Usuario predeterminado
-      - RABBITMQ_DEFAULT_PASS=bidjango.  # Contraseña predeterminada
-    depends_on:
-      - redis
-      - elasticsearch
-    networks:
-      - elastic
 
 volumes:
   backend-postgres-local:

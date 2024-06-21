@@ -5,7 +5,7 @@ import dash_mantine_components as dmc
 from ...resource.helpers.make_grid import *
 from ...resource.layouts.base import *
 from ...resource.components.toggle import darkModeToggleDash
-from ...resource.components.cards import card_id,card_segment,card_stack
+from ...resource.components.cards import card_id,card_segment,card_stack,cardGraph
 from ...resource.components.notification import notification_update_show
 from ...oldapp.utils import *
 from ...resource.components.datepicker import datepicker_alm
@@ -78,25 +78,32 @@ class DashLogistica:
                 ],size= 1),
 
                 Col([
-                    card_id(id_ = "bar-stock-items",title="Stock Valorizado y N° Items por mes y año",height=height_layout)
+                    cardGraph(id="bar-stock-items"),
+                    #card_id(id_ = "bar-stock-items",title="Stock Valorizado y N° Items por mes y año",height=height_layout)
                 ],size= 7),
                 Col([
-                    card_id(id_ = "bar-stock-familia",title="Stock por Grupo de Producto",height=height_layout)
+                    cardGraph(id="bar-stock-familia")
+                    #card_id(id_ = "bar-stock-familia",title="Stock por Grupo de Producto",height=height_layout)
                 ],size= 5),
                 Col([
-                    card_id(id_ = "bar-top-producto",title="Productos (Stock Valorizado Top 10)",height=height_layout)
+                    cardGraph(id="bar-top-producto")
+                    #card_id(id_ = "bar-top-producto",title="Productos (Stock Valorizado Top 10)",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "pie-stock-antiguedad",title="Stock Valorizado segun Antigüedad",height=height_layout)
+                    cardGraph(id="pie-stock-antiguedad")
+                    #card_id(id_ = "pie-stock-antiguedad",title="Stock Valorizado segun Antigüedad",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "pie-items-antiguedad",title="Nro Items segun Antigüedad",height=height_layout)
+                    cardGraph(id="pie-items-antiguedad")
+                    #card_id(id_ = "pie-items-antiguedad",title="Nro Items segun Antigüedad",height=height_layout)
                 ],size= 4),
                 Col([
-                    card_id(id_ = "bar-stock-abc-ventas",title="Porcentaje Stock por ABC Ventas",height=height_layout)
+                    cardGraph(id="bar-stock-abc-ventas")
+                    #card_id(id_ = "bar-stock-abc-ventas",title="Porcentaje Stock por ABC Ventas",height=height_layout)
                 ],size= 6),
                 Col([
-                    card_id(id_ = "bar-stock-abc-valorizado",title="Porcentaje Stock por ABC Stock Valorizado",height=height_layout)
+                    cardGraph(id="bar-stock-abc-valorizado")
+                    #card_id(id_ = "bar-stock-abc-valorizado",title="Porcentaje Stock por ABC Stock Valorizado",height=height_layout)
                 ],size= 6),
 
             ]),
@@ -150,13 +157,13 @@ class DashLogistica:
             col_moneda = 'Soles' if moneda == 'PEN' else 'Dolares'
             theme_ = "plotly_white" if theme == True else "plotly_dark"
             return [
-            figure_stock_var_y2(df=df, height = height_layout, moneda = col_moneda,template =theme_),
-            figure_bar_familia(df = df, height = height_layout, moneda = col_moneda,template =theme_),
-            figure_bar_top_producto(df = df, height = height_layout, moneda = col_moneda,template =theme_),
-            figure_bar_relative(df = df, height = height_layout, eje_color = 'ABC Ventas', title = '', moneda = col_moneda,template =theme_),
-            figure_bar_relative(df = df, height = height_layout, eje_color = 'ABC Stock', title = '', moneda = col_moneda,template =theme_),
-            figure_pie_rango_stock(df = df, height = height_layout, moneda = col_moneda,template =theme_),
-            figure_pie_rango_stock_count(df = df, height = height_layout, moneda = col_moneda,template =theme_)
+            figure_stock_var_y2(df=df, height = height_layout, moneda = col_moneda,template =theme_,title="Stock Valorizado y N° Items por mes y año"),
+            figure_bar_familia(df = df, height = height_layout, moneda = col_moneda,template =theme_,title="Stock Valorizado por Grupo Producto"),
+            figure_bar_top_producto(df = df, height = height_layout, moneda = col_moneda,template =theme_,title ="Top 10 Productos por Stock Valorizado"),
+            figure_bar_relative(df = df, height = height_layout, eje_color = 'ABC Ventas', title = 'Porcentaje Stock por ABC Ventas', moneda = col_moneda,template =theme_),
+            figure_bar_relative(df = df, height = height_layout, eje_color = 'ABC Stock', title = 'Porcentaje Stock por ABC Stock Valorizado', moneda = col_moneda,template =theme_),
+            figure_pie_rango_stock(df = df, height = height_layout, moneda = col_moneda,template =theme_,title="Stock Valorizado segun Antigüedad"),
+            figure_pie_rango_stock_count(df = df, height = height_layout, moneda = col_moneda,template =theme_,title="Nro Items segun Antigüedad")
         ]
         opened_modal(app = app, id="bar-stock-items",height_modal=900)
         opened_modal(app = app, id="bar-stock-familia",height_modal=900)
@@ -241,13 +248,31 @@ class DashLogistica:
                     card_segment(id_='bar-importe-stock',id_segmented='segmented-col',value = 'Sucursal',data = segment_list,height=height_layout_row_1)
                 ],size= 8),
                 Col([
-                    card_id(id_='pie-estadoinv',title="Estado de Inventario",height=height_layout_row_1)
+                    cardGraph(id = "pie-estadoinv")
+                    #card_id(id_='pie-estadoinv',title="Estado de Inventario",height=height_layout_row_1)
                 ],size= 4),
                 Col([
-                    card_id(id_='table-status',height=height_layout,title="Tabla de Estado", graph=False)
+                    #cardGraph(id = "")
+                    dag.AgGrid(
+                        id= "table-status",
+                        defaultColDef = {
+                            "resizable": True,
+                            "initialWidth": 160,
+                            "wrapHeaderText": True,
+                            "autoHeaderHeight": True,
+                            "minWidth":160,
+                            "sortable": True, 
+                            "filter": True
+                        },
+                        #className="ag-theme-alpine headers1",
+                        columnSize="sizeToFit",
+                        style={'font-size': '13px','height':height_layout},
+                    )
+                    #card_id(id_='table-status',height=height_layout,title="Tabla de Estado", graph=False)
                 ],size= 8),
                 Col([
-                    card_id(id_='bar-respon',height=height_layout,title="N° Registros por Responsable")
+                    cardGraph(id = "bar-respon")
+                    #card_id(id_='bar-respon',height=height_layout,title="N° Registros por Responsable")
                 ],size= 4),
             ]),
             html.Div(id='notifications-update-data'),
@@ -317,8 +342,8 @@ class DashLogistica:
                 table_dff.to_dict("records"),
                 [{"field": i,"cellStyle": {'font-size': 11}} for i in table_dff.columns],
                 "ag-theme-alpine" if theme == True else "ag-theme-alpine-dark",
-                figure_pie_estado_inv(df = df, height = height_layout_row_1,template=theme_),
-                figure_bar_responsable(df = df, height = height_layout,template=theme_)
+                figure_pie_estado_inv(df = df, height = height_layout_row_1+30,template=theme_,title="Estado de Inventario"),
+                figure_bar_responsable(df = df, height = height_layout,template=theme_,title="Registros por Responsable")
             ]
         opened_modal(app = app, id="bar-importe-stock",height_modal=900)
         opened_modal(app = app, id="pie-estadoinv",height_modal=900)
@@ -457,7 +482,8 @@ class DashLogistica:
                             card_stack()
                         ]),
                         Col([
-                            card_id(id_='bar-minv-prom',title="Meses de Inventario Promedio",height=320)
+                            cardGraph(id="bar-minv-prom"),
+                            #card_id(id_='bar-minv-prom',title="Meses de Inventario Promedio",height=320)
 
                         ]),
                     ])
@@ -507,15 +533,18 @@ class DashLogistica:
                     ),
                 ]),
                 Col([
-                    card_id(id_='bar-inv_val-first',title="Sucursal por Inventario Valorizado",height=320)
+                    cardGraph(id="bar-inv_val-first"),
+                    #card_id(id_='bar-inv_val-first',title="Sucursal por Inventario Valorizado",height=320)
 
                 ],size= 4),
                 Col([
-                    card_id(id_='bar-inv_val-second',title="Almacen por Inventario Valorizado",height=320)
+                    cardGraph(id="bar-inv_val-second"),
+                    #card_id(id_='bar-inv_val-second',title="Almacen por Inventario Valorizado",height=320)
 
                 ],size= 4),
                 Col([
-                    card_id(id_='bar-inv_val-thrid',title="Grupo Producto por Inventario Valorizado",height=320)
+                    cardGraph(id="bar-inv_val-thrid"),
+                    #card_id(id_='bar-inv_val-thrid',title="Grupo Producto por Inventario Valorizado",height=320)
 
                 ],size= 4)
             ]),
@@ -622,10 +651,9 @@ class DashLogistica:
             precio_unit_prom = saldos_alm_df.groupby(['COD_PRODUCTO'])[[col_pu]].mean().reset_index()
             precio_unit_prom = precio_unit_prom.rename(columns = {col_pu:'Precio Unitario Promedio'})
             precio_unit_prom['Precio Unitario Promedio'] = precio_unit_prom['Precio Unitario Promedio'].fillna(0).round(2)
-            print(precio_unit_prom)
+
             #
             consumos_alm_df = consumos_alm_df.groupby(['IDPRODUCTO'])[['CANTIDAD']].sum().reset_index()
-            print(consumos_alm_df)
             saldos_alm_group_df = saldos_alm_df.groupby(['DSC_GRUPO', 'DSC_SUBGRUPO', 'COD_PRODUCTO', 'DESCRIPCION', 'UM','MARCA'])[['PU_S','PU_D', 'STOCK', 'INV_VALMOF', 'INV_VALMEX']].sum().reset_index()
             saldos_alm_group_df = saldos_alm_group_df[saldos_alm_group_df['STOCK']>0]
             
@@ -694,11 +722,11 @@ class DashLogistica:
                 [{'label': i, 'value': i} for i in sorted(input_df['DSC_SUBGRUPO'].unique())],
                 [{'label': i, 'value': i} for i in sorted(input_df['MARCA'].unique())],
                 cpm,invval,stock,consumo,total_stock,
-                bar_logistica_y1(df = df_mi_,height = 320, template=theme_),
+                bar_logistica_y1(df = df_mi_,height = 340, template=theme_,title="Meses de Inventario Promedio"),#Meses de Inventario Promedio
                 #bar_logistica_y2(df = df_mi_iv,height = 320,y_col=inv_val_moneda ),
-                bar_horizontal(df = sucursal_df, height = 350, x= inv_val_moneda, y = 'SUCURSAL', name_x='Inventario Valorizado', name_y='Sucursal',title = '',color = 'rgb(95, 70, 144)', template=theme_),
-                bar_horizontal(df = almacen_df, height = 350, x= inv_val_moneda, y = 'ALMACEN', name_x='Inventario Valorizado', name_y='Almacen',title = '',color ='rgb(29, 105, 150)', template=theme_),
-                bar_horizontal(df = grupo_df, height = 350, x= inv_val_moneda, y = 'DSC_GRUPO', name_x='Inventario Valorizado', name_y='Grupo Producto',title = '',color = 'rgb(56, 166, 165)', template=theme_),
+                bar_horizontal(df = sucursal_df, height = 350, x= inv_val_moneda, y = 'SUCURSAL', name_x='Inventario Valorizado', name_y='Sucursal',title = "Sucursal por Inventario Valorizado",color = 'rgb(95, 70, 144)', template=theme_,),
+                bar_horizontal(df = almacen_df, height = 350, x= inv_val_moneda, y = 'ALMACEN', name_x='Inventario Valorizado', name_y='Almacen',title = "Almacen por Inventario Valorizado",color ='rgb(29, 105, 150)', template=theme_),
+                bar_horizontal(df = grupo_df, height = 350, x= inv_val_moneda, y = 'DSC_GRUPO', name_x='Inventario Valorizado', name_y='Grupo Producto',title = "Grupo Producto por Inventario Valorizado",color = 'rgb(56, 166, 165)', template=theme_),
                 df_table.to_dict("records"),
                 fields_columns(columns = df_table.columns),
                 "ag-theme-alpine" if theme == True else "ag-theme-alpine-dark",

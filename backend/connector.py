@@ -2,6 +2,7 @@
 
 import requests
 import pandas as pd
+import httpx
 from celery import shared_task
 
 class APIConnector:
@@ -26,4 +27,18 @@ class APIConnector:
         obj = response.json()
         obj_ = obj['objeto']
         return pd.DataFrame(obj_)
+    
+
+async def fetch_data_from_api(ip = None, token = None,sp = None, params = None):
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://{ip}:3005/api/consulta/{sp}", headers=headers, params = params, timeout=100.0)
+        response.raise_for_status()  # Esto lanzará una excepción si la respuesta no es 2xx
+        obj = response.json()
+        obj_ = obj['objeto']
+        return obj_
+
+
 

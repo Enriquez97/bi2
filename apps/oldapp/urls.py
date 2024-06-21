@@ -1,9 +1,12 @@
 from django.urls import path
+from .views.sp import ShowAPI,NewTheme
 from .views.old_apps import (
     HomeOld,
     FinanzasBg,FinanzasBap,FinanzasActivo,FinanzasPasivo,
     LogisticaStocks,EstadoInventario,GestionStocks,
-    InformeVentas,ResumenVentas
+    InformeVentas,ResumenVentas,
+    AsyncHomeView,
+    AgricolaCampania
 )
 
 
@@ -30,4 +33,14 @@ urls_comercial = [
 
 ]
 
-urlpatterns = urls_home + urls_finanzas + urls_logistica + urls_comercial
+url_produccion = [
+    path('agricola-ejecucion',AgricolaCampania.as_view(),name='ejecucion_agricola'),
+]
+
+urls_test= [
+    path('test',AsyncHomeView.as_view(),name='test'),
+    path('endpoint/<str:sp>',ShowAPI.as_view(),name='sp_show_data'),
+    path('comercial',NewTheme.as_view(),name='comercial'),
+]
+
+urlpatterns = urls_home + urls_finanzas + urls_logistica + urls_comercial + url_produccion + urls_test
