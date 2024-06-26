@@ -6,7 +6,7 @@ from .views.old_apps import (
     LogisticaStocks,EstadoInventario,GestionStocks,
     InformeVentas,ResumenVentas,
     AsyncHomeView,
-    AgricolaCampania
+    AgricolaCampania,AgricolaCostos
 )
 
 
@@ -35,6 +35,7 @@ urls_comercial = [
 
 url_produccion = [
     path('agricola-ejecucion',AgricolaCampania.as_view(),name='ejecucion_agricola'),
+    path('agricola-costos',AgricolaCostos.as_view(),name='agricola_costos'),
 ]
 
 urls_test= [

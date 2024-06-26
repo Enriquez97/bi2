@@ -80,6 +80,22 @@
           </ul>
         </div>
       </li>
+      {% if user.profile.company.category.description == "Agrícola" or user.profile.company.category.description == "Agroindustrial"%}
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#produccion" aria-expanded="false" aria-controls="produccion">
+          <i class="mdi mdi-glassdoor menu-icon"></i>
+          <span class="menu-title">Produccion</span>
+          <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="produccion">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" href="{% url "ejecucion_agricola" %}">Ejecución de Campaña</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url "agricola_costos" %}">Costos de Campaña</a></li>
+          </ul>
+        </div>
+      </li>
+      {% endif %}
+
     </ul>
 
 </aside >

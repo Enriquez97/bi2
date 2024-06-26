@@ -2,7 +2,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.urls import reverse_lazy
 from ...management.models import Profile
 from ..app.finanzas import DashFinanzas
@@ -199,12 +199,32 @@ class AgricolaCampania(LoginRequiredMixin,View):
     def get(self,request):
         code = str(uuid.uuid4())
         profile = Profile.objects.get(user_id = self.request.user.id)
+        
+        rubro = profile.company.category.description
+        if rubro == "Agrícola" or rubro == "Agroindustrial":
         #print(profile.company.avatar_profile)
-        context = {
-            'dashboard': DashProduccion().ejecucion_campania(code = code),
-            'code': code
-        }
-        return render(request,'produccion.html',context)
+            context = {
+                'dashboard': DashProduccion().agricola_ejecucion(code = code),
+                'code': code
+            }
+            return render(request,'produccion.html',context)
+        else:
+            return redirect('home_old')
+
+class AgricolaCostos(LoginRequiredMixin,View):
+    login_url = reverse_lazy('login')
+    def get(self,request):
+        code = str(uuid.uuid4())
+        profile = Profile.objects.get(user_id = self.request.user.id)
+        rubro = profile.company.category.description
+        if rubro == "Agrícola" or rubro == "Agroindustrial":
+            context = {
+                'dashboard': DashProduccion().agricola_costos(code = code),
+                'code': code
+            }
+            return render(request,'produccion.html',context)
+        else:
+            return redirect('home_old')
        
     
     

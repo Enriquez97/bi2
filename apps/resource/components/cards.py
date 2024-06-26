@@ -236,31 +236,31 @@ def card_stack(id_value = '',text = 'cpm'):
             radius='md',
         )
     
-def cardGraph(id = ""):
-    return html.Div([
-        dmc.LoadingOverlay(
-            loaderProps={"variant": "bars", "color": "#01414b", "size": "xl"},
-            loader=dmc.Image(src="https://i.imgur.com/KIj15up.gif", alt="", caption="", width=70,height=70),
-            children=[
-                dmc.Card(
-                    children=[
-                        dmc.ActionIcon(
-                            DashIconify(icon=f"feather:{"maximize"}"), 
-                            color="blue", 
-                            variant="default",
-                            id=f"maxi_{id}",
-                            n_clicks=0,
-                            mb=10,
-                            style={'position': 'absolute','top': '4px','right': '4px','z-index': '99'},
-                        ),
-                        dcc.Graph(id=id, figure=graph_empty(text=''))# figure=graph_empty
-                    ],
-                    withBorder=True,
-                    shadow="sm",
-                    radius="md",
-                    p=0
-                ),
-            ]
-        ),
-        
-    ])
+def cardGraph(id = "",figure = graph_empty(text='')):
+        return html.Div([
+            dmc.LoadingOverlay(
+                loaderProps={"variant": "bars", "color": "#01414b", "size": "xl"},
+                loader=dmc.Image(src="https://i.imgur.com/KIj15up.gif", alt="", caption="", width=70,height=70),
+                children=[
+                    dmc.Card(
+                        children=[
+                            dmc.ActionIcon(
+                                DashIconify(icon=f"feather:{"maximize"}"), 
+                                color="blue", 
+                                variant="default",
+                                id=f"maxi_{id}",
+                                n_clicks=0,
+                                mb=10,
+                                style={'position': 'absolute','top': '4px','right': '4px','z-index': '99'},
+                            ),
+                            dcc.Graph(id=id, figure= figure)# figure=graph_empty
+                        ],
+                        withBorder=True,
+                        shadow="sm",
+                        radius="md",
+                        p=0
+                    ),
+                ]
+            ),
+            
+        ])

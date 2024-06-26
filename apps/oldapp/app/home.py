@@ -56,7 +56,7 @@ class DashHomeOld:
                            Grid([
                            Col([ dmc.Center([dmc.Avatar(src=user_index["avatar_profile"],radius="xl",size=130)])]), 
                            Col([dmc.Center([dmc.Text(children=[user_index["name_user"]],size=18,weight=700,align="center")])]), 
-                           Col([dmc.Center([dmc.Text(children=[user_index["empresa"]],size=18,weight=700)])]), 
+                           Col([dmc.Center([dmc.Text(children=[user_index["empresa"]],size=18,weight=700,align="center")])]), 
                            Col([dmc.Center([dmc.Text(children=[user_index["rol"]],size=16)])]),
                            Col([dmc.Center([dmc.Text(children=[user_index["rubro"]],size=16)])]),  
                            Col([dmc.Center([dmc.Badge("Servicios On", variant="outline",color="blue")if user_index["status_service"] == True else dmc.Badge("Servicios Off", variant="outline",color="red")])]), 

@@ -695,7 +695,7 @@ class DashFormUser:
                         updateProfile(data = (data_inputs["id"],name_,last_name_,phone_,email,rol,img,check))
                         #return not modal, modal_success,True
                     #except:
-                        return not modal, modal_success, True
+                        return not modal, modal_success, False
                     
                     #if args[-2] == False and args[6] == args[7] and args[4].__contains__("@") == True and  (args[5] !="" or args[5] != None ) and validar_contraseña(args[6]) == True and (args[3] !="" or args[3] != None ):#
                         #createProfile(data=args[1:-2])
@@ -703,7 +703,7 @@ class DashFormUser:
                     #else:
                     #    return not args[13], modal_error,False#dmc.Alert("error!", title="Danger!", color="red")
                 else:
-                    return not modal, modal_error, True   
+                    return not modal, modal_error, False   
 
        
 
