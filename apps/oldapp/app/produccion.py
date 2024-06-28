@@ -380,7 +380,7 @@ def pie_(df = pd.DataFrame(),label_col = '',
         figure.update_layout(plot_bgcolor = plot_bgcolor, paper_bgcolor = paper_bgcolor)
         return figure
                  
-agricola_df = pd.read_parquet('agricola.parquet', engine='pyarrow')
+agricola_df = pd.read_parquet('agricola_.parquet', engine='pyarrow')
 #df = df.drop(["NCULTIVO","POLYGON","AREA_PLANIFICADA","CODSIEMBRA","CODCAMPAÑA","SEMANA"], axis=1)
 #df = df[df['AÑO_CAMPAÑA']>2020]
 
