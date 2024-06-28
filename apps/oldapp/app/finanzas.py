@@ -179,16 +179,45 @@ class DashFinanzas:
             activo_p3_df = activo_df.groupby(['titulo1','titulo3'])[[col_moneda]].sum().sort_values(col_moneda).reset_index()
             pasivo_df = df[df['titulo1']=='PASIVO']
             pasivo_p3_df = pasivo_df.groupby(['titulo1','titulo3'])[[col_moneda]].sum().sort_values(col_moneda).reset_index()
-            
-            act_pas_corr_df = df[df['titulo2'].isin(['ACTIVO CORRIENTE','PASIVO CORRIENTE','ACTIVOS CORRIENTES','PASIVOS CORRIENTES'])]
-            corr_pivot_df = pd.pivot_table(act_pas_corr_df,index=['periodo','Año', 'Mes', 'Mes_num', 'Mes_', 'Trimestre'],values= col_moneda,columns='titulo2',aggfunc='sum').reset_index()
-            try:
-                corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVO CORRIENTE']
+            try :
+                act_pas_corr_df = df[df['titulo2'].isin(['ACTIVO CORRIENTE','PASIVO CORRIENTE','ACTIVOS CORRIENTES','PASIVOS CORRIENTES'])]
+                corr_pivot_df = pd.pivot_table(act_pas_corr_df,index=['periodo','Año', 'Mes', 'Mes_num', 'Mes_', 'Trimestre'],values= col_moneda,columns='titulo2',aggfunc='sum').reset_index()
+                try:
+                    corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVO CORRIENTE']
+                except:
+                    corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVOS CORRIENTES']
+                fondo_mani_df = corr_pivot_df.groupby(['Mes_num','Mes_'])[['Fondo de Maniobra']].sum().sort_values('Mes_num',ascending = True).reset_index()
+                fig_4 = px.bar(fondo_mani_df, x='Mes_', y='Fondo de Maniobra', #color='Tipo de operación' 
+                    height=height_layout, 
+                    template = "plotly_white",
+                    orientation='v',
+                    color_discrete_sequence=["rgb(93,105,177)"]
+                    
+                )
+                fig_4.update_traces(hovertemplate='<br>'+"Fondo de Maniobra"+': <b>%{x}</b><br>'+moneda+': <b>%{y:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white"),cliponaxis=False,)
+                fig_4.update_layout(legend=dict(orientation="v",yanchor="bottom",y=1.02,xanchor="right",x=1),legend_title_text='')
+                fig_4.update_layout(xaxis_title='<b>'+"Mes"+'</b>',yaxis_title='<b>'+moneda+'</b>')
+                fig_4.update_layout(yaxis_tickformat = ',',bargap=0.20,margin=dict(r = 20, t = 40,l=20,b = 20))
+                fig_4.update_layout(title=dict(text="<b>Fondo de Maniobra</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
             except:
-                corr_pivot_df['Fondo de Maniobra'] = corr_pivot_df['ACTIVO CORRIENTE'] - corr_pivot_df['PASIVOS CORRIENTES']
-            fondo_mani_df = corr_pivot_df.groupby(['Mes_num','Mes_'])[['Fondo de Maniobra']].sum().sort_values('Mes_num',ascending = True).reset_index()
-            
-            table_df = df.groupby(['Año', 'Mes', 'Mes_num', 'Mes_','titulo1','titulo2', 'titulo3'])[[col_moneda]].sum().reset_index()
+                titulo2_df = df.groupby(['titulo2','Mes_num','Mes_'])[[col_moneda]].sum().reset_index()
+                fig_4 = px.bar(titulo2_df, x='Mes_', y=col_moneda, color='titulo2',
+                    height=height_layout, 
+                    template = "plotly_white",
+                    barmode='group',
+                    color_discrete_sequence=px.colors.carto.Aggrnyl
+                )
+                fig_4.update_layout(xaxis_title='<b>'+"Mes"+'</b>',yaxis_title='<b>'+moneda+'</b>')
+                fig_4.update_layout(
+                    title = f"<b>Partidas Nivel 2</b>",
+                    title_font_family="sans-serif", 
+                    title_font_color="black", 
+                    title_font_size = 18,
+                    legend_title="",
+                    #title_text="STOCK VALORIZADO Y NRO ITEMS POR MES Y AÑO",
+                )
+                fig_4.update_traces(hovertemplate='<br>'+"Mes"+': <b>%{x}</b><br>'+moneda+': <b>%{y:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white"),cliponaxis=False,)
+            #table_df = df.groupby(['Año', 'Mes', 'Mes_num', 'Mes_','titulo1','titulo2', 'titulo3'])[[col_moneda]].sum().reset_index()
             #pivot_test_df = pd.pivot_table(table_df,index=['titulo1','titulo2', 'titulo3'],values=col_moneda,columns=['Año','Mes_num'],aggfunc='sum').fillna(0).reset_index()
             fig_2 = px.bar(activo_p3_df, x=col_moneda, y='titulo3', #color='Tipo de operación' 
                 height=height_layout, 
@@ -220,20 +249,7 @@ class DashFinanzas:
             fig_3.update_layout(title=dict(text="<b>Pasivo</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
             
             
-            fig_4 = px.bar(fondo_mani_df, x='Mes_', y='Fondo de Maniobra', #color='Tipo de operación' 
-                height=height_layout, 
-                template = "plotly_white",
-                #title = ,
-                orientation='v',
-                #color_discrete_sequence=px.colors.qualitative.G10,
-                color_discrete_sequence=["rgb(93,105,177)"]
-                
-            )
-            fig_4.update_traces(hovertemplate='<br>'+"Fondo de Maniobra"+': <b>%{x}</b><br>'+moneda+': <b>%{y:,.1f}</b>',hoverlabel=dict(font_size=13,bgcolor="white"),cliponaxis=False,)
-            fig_4.update_layout(legend=dict(orientation="v",yanchor="bottom",y=1.02,xanchor="right",x=1),legend_title_text='')
-            fig_4.update_layout(xaxis_title='<b>'+"Mes"+'</b>',yaxis_title='<b>'+moneda+'</b>')
-            fig_4.update_layout(yaxis_tickformat = ',',bargap=0.20,margin=dict(r = 20, t = 40,l=20,b = 20))
-            fig_4.update_layout(title=dict(text="<b>Fondo de Maniobra</b>", font=dict(size=22,color="black"), automargin=True, yref='paper'))
+
             return [
                 #bar_hor(df = activo_p3_df, height = height_layout, x= col_moneda, y = 'titulo3', name_x=moneda, name_y='Activo',title = '',color = '#4543E6',template=theme_),
                 fig_2,
@@ -641,6 +657,8 @@ class DashFinanzas:
             
             activo_dff = df[df['titulo1'].isin(['ACTIVO'])]
             ap_df = activo_dff.groupby(['titulo2'])[[col_moneda]].sum().reset_index()
+            ap_df[col_moneda] = ap_df[col_moneda].abs()
+            
             
             year_act_df = activo_dff.groupby(['Año','Mes_num','Mes_'])[[col_moneda]].sum().reset_index()
             year_df = pd.pivot_table(year_act_df,index=['Mes_num', 'Mes_'],values=col_moneda,columns='Año',aggfunc='sum').reset_index()
